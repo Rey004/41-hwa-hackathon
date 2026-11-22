@@ -90,9 +90,10 @@ A four-route storefront built around the product, with a slide-out cart instead 
 ### Commerce behaviour
 
 - **Cart** — a small external store in `src/lib/cart.ts` persisted to `localStorage` and read through `useSyncExternalStore`, so the cart survives reloads and stays in sync across the header badge, the drawer and checkout.
-- **Checkout** — React Hook Form with a Zod resolver. Field-level errors render inline, the submit button has a loading state, and failures surface a retryable banner.
-- **Payment** — clearly marked **test mode**. No card data is collected, stored or sent. The form posts customer details, line items and totals to `/api/orders`, which simulates payment processing and returns a unique reference in the `PAW-XXXXXX-IN` format.
-- **Order lookup** — the order is cached in `sessionStorage` at checkout and re-read on the confirmation page, with an API fallback.
+- **Checkout** — React Hook Form with a Zod resolver. It collects full name, email, phone, house/flat, street/area, city, state, PIN code and country, plus a delivery method (standard or express) and a payment method. Field-level errors render inline, the submit button has a loading state, and failures surface a retryable banner.
+- **Shipping** — standard delivery is ₹99, or free above ₹1,999; express delivery is ₹199. The order summary reflects the live selection.
+- **Payment** — clearly marked **test mode**. Three simulated methods (UPI, card, cash on delivery) are selectable; no card data is collected, stored or sent. The form posts customer details, line items and totals to `/api/orders`, which simulates payment processing and returns a unique reference in the `PAW-XXXXXX-IN` format.
+- **Order lookup** — the order is cached in `sessionStorage` at checkout and re-read on the confirmation page, with an API fallback and a demo order as the last resort.
 
 ### Design system
 

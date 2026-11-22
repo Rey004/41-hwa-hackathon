@@ -37,34 +37,45 @@ export default function HomePage() {
     <div className="flex flex-col gap-6 sm:gap-10 pb-16">
       {/* 2. Hero Section */}
       <section className="pt-4 pb-6 sm:pt-6 sm:pb-8 px-3 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto bg-white rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 lg:p-12 shadow-xl overflow-hidden relative">
+        <div className="max-w-7xl mx-auto bg-white rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-4 sm:p-10 lg:p-12 shadow-xl overflow-hidden relative">
           {/* Top Big Brand Letters with Dog Photo Overlap (Inspired by reference art direction) */}
-          <div className="relative text-center pt-2 pb-6 sm:pb-12">
+          <div className="relative text-center pt-2 pb-14 sm:pb-16 md:pb-2
+          0">
+            {/* Mobile decor tags row (avoids overlapping the dog portrait on mobile) */}
+            <div className="flex sm:hidden items-center justify-between gap-2 px-1 mb-3">
+              <div className="sticker-badge bg-emerald-100 text-emerald-950 px-2.5 py-1 rounded-full text-[10px] font-heading font-extrabold shadow-xs border border-emerald-300">
+                <span>🐾 5 Integrated Zones</span>
+              </div>
+              <div className="sticker-badge-alt bg-teal-100 text-teal-950 px-2.5 py-1 rounded-full text-[10px] font-heading font-extrabold shadow-xs border border-teal-300">
+                <span>★ Vet &amp; Trainer Approved</span>
+              </div>
+            </div>
+
             <div className="relative inline-block w-full max-w-5xl">
-              {/* Sticker 1: Top Left */}
-              <div className="absolute -top-3 left-4 sm:left-12 z-30 sticker-badge bg-emerald-100 text-emerald-950 px-3.5 py-1 rounded-full text-[11px] sm:text-xs font-heading font-extrabold shadow-sm border border-emerald-300">
+              {/* Desktop Sticker 1: Top Left */}
+              <div className="hidden sm:block absolute -top-3 left-4 sm:left-12 z-30 sticker-badge bg-emerald-100 text-emerald-950 px-3.5 py-1 rounded-full text-xs font-heading font-extrabold shadow-sm border border-emerald-300">
                 <span>🐾 5 Integrated Zones</span>
               </div>
 
-              {/* Sticker 2: Top Right */}
-              <div className="absolute -top-4 right-6 sm:right-16 z-30 sticker-badge-alt bg-teal-100 text-teal-950 px-3.5 py-1 rounded-full text-[11px] sm:text-xs font-heading font-extrabold shadow-sm border border-teal-300">
-                <span>★ Vet & Trainer Approved</span>
+              {/* Desktop Sticker 2: Top Right */}
+              <div className="hidden sm:block absolute -top-4 right-6 sm:right-16 z-30 sticker-badge-alt bg-teal-100 text-teal-950 px-3.5 py-1 rounded-full text-xs font-heading font-extrabold shadow-sm border border-teal-300">
+                <span>★ Vet &amp; Trainer Approved</span>
               </div>
 
               {/* Massive Oversized Brand Letters */}
-              <h1 className="font-heading text-6xl sm:text-8xl md:text-9xl lg:text-[140px] font-black tracking-tighter text-[#0b3824] leading-none select-none">
+              <h1 className="font-heading text-5xl sm:text-7xl md:text-9xl lg:text-[140px] font-black tracking-tighter text-[#0b3824] leading-none select-none">
                 pawpath
               </h1>
 
-              {/* Dog Peek-Through Portrait (Exact homage to reference image layout) */}
-              <div className="absolute -bottom-6 sm:-bottom-10 left-1/2 -translate-x-1/2 z-20 w-36 sm:w-52 md:w-60 aspect-square">
+              {/* Dog Peek-Through Portrait (Brought down slightly on mobile so it is not cut off) */}
+              <div className="absolute -bottom-10 sm:-bottom-12 md:-bottom-14 left-1/2 -translate-x-1/2 z-20 w-32 h-32 sm:w-48 sm:h-48 md:w-56 md:h-56 aspect-square">
                 <div className="relative w-full h-full rounded-full border-4 border-white shadow-2xl overflow-hidden ring-4 ring-emerald-500/20 bg-emerald-100">
                   <Image
                     src="/images/products/dog-hero.webp"
                     alt="Dog enjoying training with PAWPATH"
                     fill
                     priority
-                    className="object-cover object-top hover:scale-105 transition-transform duration-500"
+                    className="object-cover object-center sm:object-top hover:scale-105 transition-transform duration-500"
                   />
                 </div>
               </div>
@@ -72,7 +83,7 @@ export default function HomePage() {
           </div>
 
           {/* Editorial Split Composition */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-8 sm:pt-14 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-12 sm:pt-16 lg:pt-16 items-stretch">
             {/* Left: Bold Organic Green Editorial Box */}
             <div className="lg:col-span-7 bg-[#0b3c27] text-white rounded-[32px] p-6 sm:p-10 flex flex-col justify-between shadow-xl relative overflow-hidden border border-emerald-700/50">
               <div className="space-y-4 relative z-10">
