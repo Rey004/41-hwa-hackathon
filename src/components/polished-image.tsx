@@ -1,79 +1,52 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import React, { useState } from "react";
+import Image, { ImageProps } from "next/image";
+import { cn } from "@/lib/utils";
 
-export interface PolishedImageProps {
-  src: string;
+interface PolishedImageProps extends Omit<ImageProps, "alt"> {
   alt: string;
-  width?: number;
-  height?: number;
+  fallbackText?: string;
   className?: string;
-  placeholderColor?: string;
-  priority?: boolean;
+  containerClassName?: string;
 }
 
-const PLACEHOLDER_COLORS = [
-  "#f0fdfa",
-  "#fefdf8",
-  "#dcfce7",
-  "#fce7ec",
-  "#fef3c7",
-];
-
-function hashString(value: string): number {
-  let hash = 0;
-  for (let i = 0; i < value.length; i += 1) {
-    hash = (hash << 5) - hash + value.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash);
-}
-
-export function PolishedImage({
+export const PolishedImage: React.FC<PolishedImageProps> = ({
   src,
   alt,
-  width,
-  height,
+  fallbackText = "PAWPATH",
   className,
-  placeholderColor,
-  priority = false,
-}: PolishedImageProps) {
+  containerClassName,
+  ...props
+}) => {
   const [error, setError] = useState(false);
-  const color =
-    placeholderColor ?? PLACEHOLDER_COLORS[hashString(src) % PLACEHOLDER_COLORS.length];
-
-  if (error) {
-    return (
-      <div
-        className={className}
-        style={{
-          backgroundColor: color,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: width ? `${width}px` : undefined,
-          height: height ? `${height}px` : undefined,
-          borderRadius: "inherit",
-        }}
-      >
-        <span className="text-xs font-heading font-semibold uppercase tracking-widest text-gray-400">
-          Image coming soon
-        </span>
-      </div>
-    );
-  }
 
   return (
-    <Image
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      priority={priority}
-      onError={() => setError(true)}
-      style={{ objectFit: "cover", borderRadius: "inherit" }}
-    />
+    <div
+      className={cn(
+        "relative overflow-hidden bg-[#eef5f0] flex items-center justify-center",
+        containerClassName
+      )}
+    >
+      {!error ? (
+        <Image
+          src={src}
+          alt={alt}
+          onError={() => setError(true)}
+          className={cn(
+            "object-cover transition-transform duration-700 hover:scale-105",
+            className
+          )}
+          {...props}
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center p-4 text-center text-emerald-800">
+          <span className="font-heading font-black text-sm tracking-wider uppercase">
+            {fallbackText}
+          </span>
+          <span className="text-[10px] text-emerald-600 mt-0.5">Interactive Training Mat</span>
+        </div>
+      )}
+    </div>
   );
-}
+};

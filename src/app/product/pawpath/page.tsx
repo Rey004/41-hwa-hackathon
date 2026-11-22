@@ -1,500 +1,674 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowRight, Truck, ShieldCheck, Check, Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardTitle, CardDescription } from "@/components/ui/card";
-import { PolishedImage } from "@/components/polished-image";
-import { Header } from "@/components/header";
-import Footer from "@/components/footer";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  CheckCircle2,
+  ShieldCheck,
+  ChevronDown,
+  ShoppingBag,
+  ArrowRight,
+  ZoomIn,
+  X,
+  Plus,
+  Minus,
+  Check,
+  Target,
+  Home,
+  Clock,
+  Compass,
+  Sparkles,
+} from "lucide-react";
 import { ZoneShowcase } from "@/components/zone-showcase";
-import { addToCart, type CartItem } from "@/lib/cart";
-import { PRODUCT, TRAINING_STEPS, SPECIFICATIONS, FAQS } from "@/lib/products";
+import {
+  PRODUCT,
+  ZONES,
+  PRODUCT_PAGE_FAQS,
+  HOW_IT_WORKS,
+  TRAINING_STAGES,
+} from "@/lib/products";
+import { formatINR } from "@/lib/utils";
+import { useCart } from "@/lib/cart";
 
-export default function ProductPage() {
+const GALLERY_IMAGES = [
+  {
+    src: "/images/products/hero.webp",
+    alt: "The PAWPATH Interactive Training Mat Overview",
+    label: "Mat Overview",
+  },
+  {
+    src: "/images/products/lifestyle.webp",
+    alt: "Dog resting comfortably on the Place Zone",
+    label: "In the Living Room",
+  },
+  {
+    src: "/images/products/zone-target.webp",
+    alt: "Tactile detail of concentric target ribs",
+    label: "Target Zone Detail",
+  },
+  {
+    src: "/images/products/zone-place.webp",
+    alt: "Cushioned place perimeter boundary",
+    label: "Place Zone Cushioning",
+  },
+  {
+    src: "/images/products/zone-wait.webp",
+    alt: "Dog practicing wait command on pause markings",
+    label: "Wait Zone Practice",
+  },
+  {
+    src: "/images/products/zone-pathway.webp",
+    alt: "Directional chevrons and recall alignment",
+    label: "Pathway Zone",
+  },
+  {
+    src: "/images/products/zone-reward.webp",
+    alt: "Textured silicone lick well and treat dock",
+    label: "Reward Zone",
+  },
+];
+
+export default function ProductDetailPage() {
+  const { addItem } = useCart();
+  const [selectedImg, setSelectedImg] = useState(0);
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState(PRODUCT.images[0].id);
-  const [added, setAdded] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [showStickyBar, setShowStickyBar] = useState(false);
 
-  const selectedImage =
-    PRODUCT.images.find((img) => img.id === activeImage) ?? PRODUCT.images[0];
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 600;
+      const nearBottom =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 500;
+      setShowStickyBar(scrolled && !nearBottom);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleAddToCart = () => {
-    const item: Omit<CartItem, "quantity"> & { quantity?: number } = {
-      productId: PRODUCT.id,
+    addItem({
+      id: "pawpath-mat",
       name: PRODUCT.name,
+      subtitle: "Forest Green • 5 Integrated Zones",
       price: PRODUCT.price,
-      image: PRODUCT.images[0].url,
+      originalPrice: PRODUCT.originalPrice,
       quantity,
-    };
-    addToCart(item);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+      image: "/images/products/hero.webp",
+    });
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <Header />
+    <div className="pb-20 space-y-10 sm:space-y-14">
+      {/* 1. Product Hero */}
+      <section className="pt-4 pb-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto bg-white rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 lg:p-14 shadow-xl">
+          <nav className="text-xs text-gray-500 mb-6 flex items-center gap-2">
+            <Link href="/" className="hover:text-emerald-800 transition">
+              Home
+            </Link>
+            <span>/</span>
+            <span className="text-gray-900 font-semibold">
+              The PAWPATH Interactive Training Mat
+            </span>
+          </nav>
 
-      {/* Gallery + Buy */}
-      <section className="relative px-6 pt-12 lg:px-12 lg:pt-16 pb-24 lg:pb-32">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
-            {/* Gallery column */}
-            <div className="lg:col-span-6">
-              <div className="relative group overflow-hidden rounded-[2.5rem] border-8 border-white shadow-xl bg-pale-mint aspect-square">
-                <PolishedImage
-                  src={selectedImage.url}
-                  alt={selectedImage.alt}
-                  width={800}
-                  height={800}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  placeholderColor="#dcfce7"
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
+            {/* Gallery (7 cols) */}
+            <div className="lg:col-span-7 space-y-4">
+              <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden bg-[#0d402b] border-2 border-emerald-800 shadow-xl group">
+                <Image
+                  src={GALLERY_IMAGES[selectedImg].src}
+                  alt={GALLERY_IMAGES[selectedImg].alt}
+                  fill
                   priority
+                  className="object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in"
+                  onClick={() => setIsZoomOpen(true)}
                 />
-                <span className="absolute top-5 left-5 rounded-full bg-white/90 backdrop-blur px-3 py-1.5 text-[10px] font-heading font-bold uppercase tracking-[0.18em] text-forest-green shadow-sm">
-                  {selectedImage.id.replace("zone-", "")}
-                </span>
+
+                <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-black/70 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-bold text-white">
+                  <span>{GALLERY_IMAGES[selectedImg].label}</span>
+                </div>
+
+                <button
+                  onClick={() => setIsZoomOpen(true)}
+                  className="absolute bottom-4 right-4 z-10 p-2.5 rounded-full bg-white/90 hover:bg-white text-emerald-950 shadow-md backdrop-blur-sm transition"
+                  aria-label="Zoom image"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </button>
               </div>
-              <div className="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-5">
-                {PRODUCT.images.slice(0, 5).map((img) => (
+
+              {/* Thumbnails */}
+              <div className="grid grid-cols-5 gap-3">
+                {GALLERY_IMAGES.map((img, i) => (
                   <button
-                    key={img.id}
-                    onClick={() => setActiveImage(img.id)}
-                    aria-label={`View ${img.alt}`}
-                    aria-pressed={activeImage === img.id}
-                    className={`overflow-hidden rounded-2xl border-2 bg-pale-mint transition-all ${
-                      activeImage === img.id
-                        ? "border-forest-green shadow-md"
-                        : "border-transparent opacity-70 hover:opacity-100"
-                    }`}
+                    key={i}
+                    onClick={() => setSelectedImg(i)}
+                    className={`relative aspect-[4/3] rounded-2xl overflow-hidden border-2 transition-all duration-200 bg-emerald-50 ${selectedImg === i
+                      ? "border-[#0da162] ring-2 ring-emerald-500/30 scale-105 shadow-sm"
+                      : "border-gray-200 hover:border-emerald-300 opacity-80 hover:opacity-100"
+                      }`}
                   >
-                    <PolishedImage
-                      src={img.url}
+                    <Image
+                      src={img.src}
                       alt={img.alt}
-                      width={200}
-                      height={200}
-                      className="w-full aspect-square object-cover"
-                      placeholderColor="#fce7ec"
+                      fill
+                      className="object-cover"
                     />
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Buy column */}
-            <div className="lg:col-span-6">
-              <div className="lg:sticky lg:top-28 space-y-7">
-                <div>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-organic-green/15 px-3 py-1 text-[10px] font-heading font-bold uppercase tracking-[0.18em] text-organic-green-dark mb-4">
-                    <span className="h-1.5 w-1.5 rounded-full bg-organic-green" />
-                    In stock · ships today
-                  </span>
-                  <h1 className="font-heading font-extrabold text-[clamp(2.5rem,5vw,3.75rem)] leading-[1.02] tracking-tight text-forest-green mb-4">
-                    {PRODUCT.name}
-                  </h1>
-                  <p className="text-lg text-gray-600 leading-relaxed mb-7">
-                    {PRODUCT.tagline} {PRODUCT.description}
-                  </p>
+            {/* Product Buy Box (5 cols) */}
+            <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full inline-block mb-3">
+                  {PRODUCT.eyebrow}
+                </span>
 
-                  <div className="flex items-baseline gap-4 mb-2">
-                    <span className="font-heading font-extrabold text-[2.25rem] leading-none text-forest-green">
-                      ${(PRODUCT.price / 100).toFixed(2)}
+                <h1 className="font-heading text-2xl sm:text-4xl font-black text-emerald-950 leading-tight">
+                  {PRODUCT.name}
+                </h1>
+
+                <p className="font-heading text-lg font-bold text-emerald-800 mt-1">
+                  {PRODUCT.headline}
+                </p>
+
+                <p className="text-xs sm:text-sm text-gray-600 mt-3 leading-relaxed">
+                  {PRODUCT.description}
+                </p>
+              </div>
+
+              {/* Pricing */}
+              <div className="p-4 rounded-2xl bg-[#faf8f3] border-2 border-[#e2eae4] flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">
+                    Special Launch Price
+                  </span>
+                  <div className="flex items-baseline gap-2 mt-0.5">
+                    <span className="font-heading font-black text-3xl text-emerald-950">
+                      {formatINR(PRODUCT.price)}
                     </span>
                     <span className="text-sm text-gray-400 line-through">
-                      ${(PRODUCT.compareAtPrice / 100).toFixed(2)}
-                    </span>
-                    <span className="rounded-full bg-coral-soft px-2.5 py-1 text-[10px] font-heading font-bold uppercase tracking-widest text-coral">
-                      Save ${((PRODUCT.compareAtPrice - PRODUCT.price) / 100).toFixed(0)}
+                      {formatINR(PRODUCT.originalPrice)}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 mb-7">
-                    {PRODUCT.dimensions} · {PRODUCT.weight} · {PRODUCT.sku}
-                  </p>
-
-                  <div className="flex flex-wrap items-center gap-4 mb-7">
-                    <span className="text-sm font-heading font-bold uppercase tracking-widest text-gray-500">
-                      Quantity
-                    </span>
-                    <div className="flex items-center border border-gray-200 rounded-full overflow-hidden">
-                      <button
-                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                        disabled={quantity <= 1}
-                        className="w-11 h-11 flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-40"
-                        aria-label="Decrease quantity"
-                      >
-                        <span className="text-lg leading-none">−</span>
-                      </button>
-                      <span className="w-10 text-center font-heading font-bold text-gray-800" aria-live="polite">
-                        {quantity}
-                      </span>
-                      <button
-                        onClick={() => setQuantity((q) => q + 1)}
-                        className="w-11 h-11 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                        aria-label="Increase quantity"
-                      >
-                        <span className="text-lg leading-none">+</span>
-                      </button>
-                    </div>
-                    <span className="text-xs text-gray-400">
-                      {PRODUCT.inStock ? "Ships in 24 hours" : "Out of stock"}
-                    </span>
-                  </div>
-
-                  <Button
-                    size="lg"
-                    onClick={handleAddToCart}
-                    className="w-full"
-                    disabled={!PRODUCT.inStock}
-                  >
-                    {added ? (
-                      <span className="flex items-center gap-2">
-                        <CheckAdded />
-                        Added to bag
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-2">
-                        Add to Bag · ${((PRODUCT.price * quantity) / 100).toFixed(2)}
-                        <ArrowRight className="h-4 w-4" />
-                      </span>
-                    )}
-                  </Button>
-
-                  {!PRODUCT.inStock && (
-                    <p className="text-sm text-red-500 mt-3">Currently out of stock.</p>
-                  )}
                 </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <Card padding="sm" className="rounded-2xl bg-pale-mint border border-organic-green/15">
-                    <div className="flex items-center gap-3">
-                      <Truck className="h-5 w-5 text-forest-green flex-none" />
-                      <div>
-                        <p className="text-[10px] font-heading font-bold uppercase tracking-widest text-forest-green">
-                          Free shipping
-                        </p>
-                        <p className="text-sm text-gray-700">On orders over $75</p>
-                      </div>
-                    </div>
-                  </Card>
-                  <Card padding="sm" className="rounded-2xl bg-pale-mint border border-organic-green/15">
-                    <div className="flex items-center gap-3">
-                      <ShieldCheck className="h-5 w-5 text-forest-green flex-none" />
-                      <div>
-                        <p className="text-[10px] font-heading font-bold uppercase tracking-widest text-forest-green">
-                          30-day guarantee
-                        </p>
-                        <p className="text-sm text-gray-700">Risk-free trial</p>
-                      </div>
-                    </div>
-                  </Card>
-                </div>
-
-                <div className="rounded-[1.75rem] border border-gray-100 bg-white p-6">
-                  <p className="text-[10px] font-heading font-bold uppercase tracking-[0.18em] text-gray-400 mb-4">
-                    Why owners love it
-                  </p>
-                  <ul className="space-y-3">
-                    {[
-                      "Five zones permanently built into one surface",
-                      "Suitable for puppies from 8 weeks to adult dogs",
-                      "Non-toxic, washable and genuinely chew-resistant",
-                    ].map((point) => (
-                      <li key={point} className="flex items-start gap-3 text-sm text-gray-600">
-                        <Check className="h-4 w-4 flex-none mt-0.5 text-organic-green" />
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sticky purchase bar (mobile) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-100 px-5 py-4 z-40 flex items-center justify-between gap-4">
-        <div>
-          <p className="font-heading font-extrabold text-lg text-forest-green leading-none">
-            ${((PRODUCT.price * quantity) / 100).toFixed(2)}
-          </p>
-          <p className="text-[10px] font-heading font-bold uppercase tracking-widest text-gray-400 mt-0.5">
-            Qty {quantity}
-          </p>
-        </div>
-        <Button size="lg" onClick={handleAddToCart} className="flex-1 max-w-[60%]">
-          {added ? "Added to bag" : "Add to Bag"}
-        </Button>
-      </div>
-      <div className="lg:hidden h-20" />
-
-      {/* Zone exploration */}
-      <section id="zones" className="px-6 pb-28 bg-ivory lg:px-12 lg:pb-36">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-[0.2em] text-organic-green-dark">
-              Interactive exploration
-            </span>
-            <h2 className="mt-4 font-heading font-extrabold text-[clamp(2.25rem,4.5vw,3.5rem)] leading-[1.04] tracking-tight text-forest-green">
-              Explore the five zones
-            </h2>
-            <p className="mt-5 text-lg text-gray-600">
-              Each zone is permanently built into the mat. Select one to see the
-              skill it teaches.
-            </p>
-          </div>
-          <ZoneShowcase />
-        </div>
-      </section>
-
-      {/* Learning benefits */}
-      <section className="px-6 pb-32 lg:px-12 lg:pb-40">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-3 gap-8">
-            <Card padding="lg" className="relative overflow-hidden rounded-[2rem] border border-gray-100 bg-white group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-pale-mint rounded-full blur-3xl -mr-8 -mt-8" />
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-full bg-forest-green/10 flex items-center justify-center mb-6 text-forest-green">
-                  <TargetIcon className="h-7 w-7" />
-                </div>
-                <CardTitle className="mb-3">Precision targeting</CardTitle>
-                <CardDescription>
-                  Teach your dog to touch specific targets with nose or paw — the
-                  foundation of all advanced commands.
-                </CardDescription>
-              </div>
-            </Card>
-            <Card padding="lg" className="relative overflow-hidden rounded-[2rem] border border-gray-100 bg-white group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-pale-mint rounded-full blur-3xl -mr-8 -mt-8" />
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-full bg-forest-green/10 flex items-center justify-center mb-6 text-forest-green">
-                  <ClockIcon className="h-7 w-7" />
-                </div>
-                <CardTitle className="mb-3">Patience &amp; stay</CardTitle>
-                <CardDescription>
-                  Build duration and impulse control with the wot zone, designed
-                  for stay and wait commands.
-                </CardDescription>
-              </div>
-            </Card>
-            <Card padding="lg" className="relative overflow-hidden rounded-[2rem] border border-gray-100 bg-white group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-pale-mint rounded-full blur-3xl -mr-8 -mt-8" />
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-full bg-forest-green/10 flex items-center justify-center mb-6 text-forest-green">
-                  <Heart className="h-7 w-7 text-organic-green" />
-                </div>
-                <CardTitle className="mb-3">Positive reinforcement</CardTitle>
-                <CardDescription>
-                  The reward zone marks every success, keeping motivation high and
-                  learning joyful.
-                </CardDescription>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Training instructions */}
-      <section className="px-6 pb-28 bg-ivory lg:px-12 lg:pb-36">
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-2xl mb-14">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-[0.2em] text-organic-green-dark">
-              Training instructions
-            </span>
-            <h2 className="mt-4 font-heading font-extrabold text-[clamp(2.25rem,4.5vw,3.5rem)] leading-[1.04] tracking-tight text-forest-green">
-              Your first session, in four moves
-            </h2>
-            <p className="mt-5 text-lg text-gray-600">
-              Five focused minutes is enough. Work through the zones in order, and
-              let the reward zone do the talking.
-            </p>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {TRAINING_STEPS.map((step) => (
-              <div
-                key={step.step}
-                className="group relative rounded-[2rem] border border-gray-100 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-forest-green/30 hover:shadow-lg"
-              >
-                <span className="absolute -top-4 left-7 flex h-12 w-12 items-center justify-center rounded-full bg-organic-green font-heading font-extrabold text-xl text-white shadow-lg transition-transform duration-300 group-hover:scale-110">
-                  {step.step}
+                <span className="text-xs font-bold text-emerald-900 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300">
+                  Save {formatINR(PRODUCT.savings)}
                 </span>
-                <h3 className="mt-8 mb-2 font-heading font-bold text-lg text-gray-800">
-                  {step.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-gray-500">{step.body}</p>
               </div>
-            ))}
-          </div>
 
-          <div className="mt-8 grid gap-5 lg:grid-cols-2">
-            <div className="rounded-[2rem] bg-forest-green p-8 text-white">
-              <h3 className="font-heading font-bold text-xl mb-4">
-                Session rules that work
-              </h3>
-              <ul className="space-y-3">
-                {[
-                  "Keep each session under five minutes — short beats long.",
-                  "Reward within half a second of the behaviour you want.",
-                  "End on a success, always finish in the reward zone.",
-                  "One cue per zone, spoken the same way every time.",
-                ].map((rule) => (
-                  <li key={rule} className="flex items-start gap-3 text-sm text-white/80">
-                    <Check className="mt-0.5 h-4 w-4 flex-none text-organic-green" />
-                    {rule}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-[2rem] border border-gray-100 bg-white p-8">
-              <h3 className="mb-4 font-heading font-bold text-xl text-forest-green">
-                A week-one plan
-              </h3>
-              <ul className="space-y-3">
-                {[
-                  { day: "Day 1–2", task: "Explore the mat, sit on reward zone" },
-                  { day: "Day 3–4", task: "Touch target on cue" },
-                  { day: "Day 5–6", task: "Place on cue, then wait in wot" },
-                  { day: "Day 7", task: "Chain target → place → reward" },
-                ].map((row) => (
-                  <li
-                    key={row.day}
-                    className="flex items-center justify-between gap-4 border-b border-gray-100 pb-3 last:border-0 last:pb-0"
-                  >
-                    <span className="font-heading font-bold text-sm text-forest-green">
-                      {row.day}
+              {/* Highlights */}
+              <div className="space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block">
+                  Product Highlights
+                </span>
+                <ul className="space-y-2 text-xs text-gray-700">
+                  {PRODUCT.highlights.map((h, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#0da162] flex-shrink-0" />
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Quantity & CTA */}
+              <div className="pt-2 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center bg-[#f0f4f1] rounded-full p-1 border border-gray-300">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-gray-700 hover:bg-white transition"
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="w-10 text-center font-heading font-bold text-sm text-gray-900">
+                      {quantity}
                     </span>
-                    <span className="text-right text-sm text-gray-500">{row.task}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-gray-700 hover:bg-white transition"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
 
-      {/* Materials */}
-      <section className="px-6 pb-32 lg:px-12 lg:pb-40">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="font-heading font-bold text-[2.5rem] leading-[1.1] text-forest-green mb-6">
-                Thoughtful materials
-              </h2>
-              <div className="space-y-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-forest-green">
-                    <Check className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800">Non-toxic TPE surface</p>
-                    <p className="text-sm text-gray-500">
-                      Safe for paws, noses, and chewing. Free from harmful chemicals.
-                    </p>
-                  </div>
+                  <button
+                    onClick={handleAddToCart}
+                    className="flex-1 py-4 px-6 rounded-full bg-[#0da162] hover:bg-[#0a8650] text-white font-heading font-extrabold text-sm sm:text-base shadow-xl transition-all duration-200 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
+                  >
+                    <ShoppingBag className="w-5 h-5" />
+                    <span>Add to Cart • {formatINR(PRODUCT.price * quantity)}</span>
+                  </button>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-forest-green">
-                    <Check className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800">Natural rubber backing</p>
-                    <p className="text-sm text-gray-500">
-                      Stays firmly in place on any floor surface during training.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-forest-green">
-                    <Check className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800">Water-resistant &amp; washable</p>
-                    <p className="text-sm text-gray-500">
-                      Wipe clean or hand wash with mild soap. Air dry flat.
-                    </p>
-                  </div>
-                </div>
+
+                <p className="text-center text-xs text-emerald-800 font-semibold italic">
+                  A little learning goes a long way.
+                </p>
               </div>
             </div>
-            <div className="hidden lg:block">
-              <PolishedImage
-                src="/images/products/lifestyle.svg"
-                alt="Material detail"
-                width={600}
-                height={600}
-                className="rounded-[2rem] shadow-2xl border border-gray-100"
-                placeholderColor="#fce7f3"
-              />
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Product Introduction */}
+      <section className="py-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto bg-white rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 lg:p-14 shadow-lg text-center max-w-3xl">
+          <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full inline-block mb-3">
+            BUILT WITH PURPOSE
+          </span>
+          <h2 className="font-heading text-3xl sm:text-5xl font-black text-emerald-950 tracking-tight">
+            Not just another play mat.
+          </h2>
+          <p className="mt-4 text-base sm:text-lg text-gray-700 leading-relaxed font-normal">
+            Every zone has a purpose. Every interaction is an opportunity to learn.
+            PAWPATH gives you and your dog a dedicated space to practise everyday
+            behaviours through guided activities and positive reinforcement.
+          </p>
+        </div>
+      </section>
+
+      {/* 3. Explore the Five Zones */}
+      <section id="zones" className="py-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto bg-white rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 lg:p-14 shadow-lg">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full inline-block mb-3">
+              TACTILE LEARNING ARCHITECTURE
+            </span>
+            <h2 className="font-heading text-3xl sm:text-5xl font-black text-emerald-950 tracking-tight">
+              Explore the Five Zones
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {ZONES.map((zone) => (
+              <div
+                key={zone.id}
+                className="bg-[#faf8f3] rounded-[32px] p-6 sm:p-7 border-2 border-[#e2eae4] flex flex-col justify-between hover:border-emerald-400 transition"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
+                      {zone.badgeText}
+                    </span>
+                    <span className="text-xs font-mono font-bold text-gray-400">
+                      {zone.eyebrow}
+                    </span>
+                  </div>
+
+                  <h3 className="font-heading font-black text-xl text-emerald-950 mb-1">
+                    {zone.name}
+                  </h3>
+                  <p className="text-xs font-bold text-emerald-800 mb-3">
+                    — {zone.tagline}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                    {zone.description}
+                  </p>
+                </div>
+
+                <div className="pt-4 mt-4 border-t border-gray-200/80 text-xs">
+                  <span className="text-gray-500 block text-[11px] font-semibold">Suggested Cue:</span>
+                  <span className="font-mono font-bold text-emerald-950">{zone.ownerCue}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. What They'll Learn */}
+      <section className="py-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto bg-[#faf8f3] rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 lg:p-14 shadow-lg">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full inline-block mb-3">
+              SKILLS & BEHAVIOURS
+            </span>
+            <h2 className="font-heading text-3xl sm:text-5xl font-black text-emerald-950 tracking-tight">
+              More than play. A little progress every day.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white rounded-[32px] p-6 sm:p-8 border-2 border-emerald-200 shadow-sm space-y-3">
+              <h3 className="font-heading font-extrabold text-xl text-emerald-950">
+                BASIC COMMANDS
+              </h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Sit, Down, Stay, Come, Touch and Paw.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-[32px] p-6 sm:p-8 border-2 border-teal-200 shadow-sm space-y-3">
+              <h3 className="font-heading font-extrabold text-xl text-teal-950">
+                EVERYDAY ETIQUETTE
+              </h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Wait, Leave It, Place, Settle and Release.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-[32px] p-6 sm:p-8 border-2 border-emerald-200 shadow-sm space-y-3">
+              <h3 className="font-heading font-extrabold text-xl text-emerald-950">
+                INTERACTIVE ACTIVITIES
+              </h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Follow, Target, Return and Retrieve.
+              </p>
+            </div>
+          </div>
+
+          <p className="text-center text-xs sm:text-sm text-gray-600 max-w-xl mx-auto">
+            Every dog learns differently. Start simple, reward progress and move forward at their own pace.
+          </p>
+        </div>
+      </section>
+
+      {/* 5. How to Use PAWPATH */}
+      <section className="py-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto bg-[#0a3824] text-white rounded-[36px] sm:rounded-[48px] p-6 sm:p-10 lg:p-14 shadow-2xl">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-300 bg-emerald-900/90 px-3 py-1 rounded-full inline-block mb-3 border border-emerald-500/40">
+              SIMPLE GUIDANCE
+            </span>
+            <h2 className="font-heading text-3xl sm:text-5xl font-black text-white tracking-tight">
+              Simple for you. Engaging for them.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-[#0e442c] rounded-[28px] p-6 border border-emerald-600/40">
+              <span className="font-heading text-2xl font-black text-emerald-300 block mb-2">01 —</span>
+              <h3 className="font-heading font-bold text-sm text-white mb-1">PICK A BEHAVIOUR</h3>
+              <p className="text-xs text-emerald-100/75">Choose one command or habit to practise.</p>
+            </div>
+
+            <div className="bg-[#0e442c] rounded-[28px] p-6 border border-emerald-600/40">
+              <span className="font-heading text-2xl font-black text-emerald-300 block mb-2">02 —</span>
+              <h3 className="font-heading font-bold text-sm text-white mb-1">INTRODUCE THE CUE</h3>
+              <p className="text-xs text-emerald-100/75">Use a verbal command or hand signal.</p>
+            </div>
+
+            <div className="bg-[#0e442c] rounded-[28px] p-6 border border-emerald-600/40">
+              <span className="font-heading text-2xl font-black text-emerald-300 block mb-2">03 —</span>
+              <h3 className="font-heading font-bold text-sm text-white mb-1">GUIDE THE ACTION</h3>
+              <p className="text-xs text-emerald-100/75">Help your dog interact with the relevant zone.</p>
+            </div>
+
+            <div className="bg-[#0e442c] rounded-[28px] p-6 border border-emerald-600/40">
+              <span className="font-heading text-2xl font-black text-emerald-300 block mb-2">04 —</span>
+              <h3 className="font-heading font-bold text-sm text-white mb-1">REWARD THE PROGRESS</h3>
+              <p className="text-xs text-emerald-100/75">Use treats, praise and repetition to reinforce the desired behaviour.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Specifications */}
-      <section className="px-6 pb-32 lg:px-12 lg:pb-40">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="font-heading font-bold text-[2.5rem] leading-[1.1] text-forest-green text-center mb-16">
-            Technical specifications
+      {/* 6. Product Construction */}
+      <section className="py-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto bg-white rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 lg:p-14 shadow-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-6 space-y-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
+                TACTILE QUALITY
+              </span>
+              <h2 className="font-heading text-3xl sm:text-4xl font-black text-emerald-950">
+                Made for paws. Designed for everyday training.
+              </h2>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                A thoughtfully integrated surface brings different tactile training
+                experiences together without requiring separate toys or complicated equipment.
+              </p>
+              <ul className="space-y-2.5 text-xs sm:text-sm text-gray-700 pt-2">
+                <li className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-[#0da162] flex-shrink-0" />
+                  <span>Single integrated construction.</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-[#0da162] flex-shrink-0" />
+                  <span>Multiple tactile surface patterns.</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-[#0da162] flex-shrink-0" />
+                  <span>Rounded, paw-friendly edges.</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-[#0da162] flex-shrink-0" />
+                  <span>Non-slip base.</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-[#0da162] flex-shrink-0" />
+                  <span>Easy-care surface.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="lg:col-span-6">
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-emerald-100 border-2 border-emerald-300">
+                <Image
+                  src="/images/products/lifestyle.webp"
+                  alt="Dog on PAWPATH mat"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Training Journey */}
+      <section className="py-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto bg-[#faf8f3] rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 lg:p-14 shadow-lg text-center">
+          <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full inline-block mb-3">
+            STAGE-BY-STAGE PROGRESS
+          </span>
+          <h2 className="font-heading text-3xl sm:text-5xl font-black text-emerald-950 tracking-tight">
+            Every dog has a different learning curve.
           </h2>
-          <div className="grid md:grid-cols-4 gap-4">
-            {SPECIFICATIONS.map((spec) => (
-              <Card key={spec.label} padding="md" className="text-center border border-gray-100 bg-white">
-                <p className="text-sm text-gray-500">{spec.label}</p>
-                <p className="font-medium text-gray-800 mt-1">{spec.value}</p>
-              </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-10 text-left">
+            <div className="p-6 rounded-3xl bg-white border-2 border-emerald-200">
+              <h3 className="font-heading font-extrabold text-base text-emerald-950 mb-1">
+                Puppy
+              </h3>
+              <p className="text-xs text-emerald-800 font-bold mb-2">
+                — Start with the basics.
+              </p>
+              <p className="text-xs text-gray-600">
+                Gentle touches, boundary comfort, and learning that training means rewards.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-3xl bg-white border-2 border-teal-200">
+              <h3 className="font-heading font-extrabold text-base text-teal-950 mb-1">
+                Learner
+              </h3>
+              <p className="text-xs text-teal-800 font-bold mb-2">
+                — Practise consistency.
+              </p>
+              <p className="text-xs text-gray-600">
+                Building patience on the wait dots and reliable recall along the pathway.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-3xl bg-white border-2 border-emerald-200">
+              <h3 className="font-heading font-extrabold text-base text-emerald-950 mb-1">
+                Well-Mannered
+              </h3>
+              <p className="text-xs text-emerald-800 font-bold mb-2">
+                — Reinforce everyday behaviours.
+              </p>
+              <p className="text-xs text-gray-600">
+                Calm doorbell settle, polite dinner table boundaries, and lifelong manners.
+              </p>
+            </div>
+          </div>
+
+          <p className="text-xs sm:text-sm text-gray-600 italic">
+            Progress is personal. Celebrate every little improvement.
+          </p>
+        </div>
+      </section>
+
+      {/* 8. Product Specifications */}
+      <section className="py-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto bg-white rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 shadow-lg">
+          <h2 className="font-heading text-2xl sm:text-3xl font-black text-emerald-950 mb-6 text-center">
+            Product Specifications
+          </h2>
+
+          <div className="divide-y divide-gray-100 border-t border-b border-gray-100 text-xs sm:text-sm">
+            <div className="py-3 flex justify-between">
+              <span className="font-bold text-gray-500">Product</span>
+              <span className="font-semibold text-gray-900">Interactive Dog Training Mat</span>
+            </div>
+            <div className="py-3 flex justify-between">
+              <span className="font-bold text-gray-500">Brand</span>
+              <span className="font-semibold text-gray-900">PAWPATH</span>
+            </div>
+            <div className="py-3 flex justify-between">
+              <span className="font-bold text-gray-500">Dimensions</span>
+              <span className="font-semibold text-gray-900">{PRODUCT.dimensions}</span>
+            </div>
+            <div className="py-3 flex justify-between">
+              <span className="font-bold text-gray-500">Construction</span>
+              <span className="font-semibold text-gray-900">{PRODUCT.construction}</span>
+            </div>
+            <div className="py-3 flex justify-between">
+              <span className="font-bold text-gray-500">Material</span>
+              <span className="font-semibold text-gray-900 text-right max-w-xs">{PRODUCT.material}</span>
+            </div>
+            <div className="py-3 flex justify-between">
+              <span className="font-bold text-gray-500">Surface</span>
+              <span className="font-semibold text-gray-900 text-right max-w-xs">{PRODUCT.surface}</span>
+            </div>
+            <div className="py-3 flex justify-between">
+              <span className="font-bold text-gray-500">Base</span>
+              <span className="font-semibold text-gray-900 text-right max-w-xs">{PRODUCT.base}</span>
+            </div>
+            <div className="py-3 flex justify-between">
+              <span className="font-bold text-gray-500">Cleaning</span>
+              <span className="font-semibold text-gray-900 text-right max-w-xs">{PRODUCT.cleaning}</span>
+            </div>
+            <div className="py-3 flex justify-between">
+              <span className="font-bold text-gray-500">Power</span>
+              <span className="font-semibold text-gray-900 text-right max-w-xs">{PRODUCT.power}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 9. Product FAQ */}
+      <section className="py-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto bg-white rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 shadow-lg">
+          <h2 className="font-heading text-2xl sm:text-3xl font-black text-emerald-950 text-center mb-8">
+            Product FAQ
+          </h2>
+          <div className="space-y-3">
+            {PRODUCT_PAGE_FAQS.map((faq, i) => (
+              <div key={i} className="p-4 rounded-2xl bg-[#f7faf8] border border-emerald-100">
+                <h3 className="font-heading font-bold text-sm text-emerald-950 mb-1">
+                  {faq.question}
+                </h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {faq.answer}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="px-6 pb-32 bg-ivory lg:px-12 lg:pb-40">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="font-heading font-bold text-[2.5rem] leading-[1.1] text-forest-green text-center mb-16">
-            Frequently asked questions
+      {/* 10. Final Purchase CTA */}
+      <section className="py-4 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto bg-[#0a3824] text-white rounded-[36px] p-8 sm:p-12 text-center space-y-6 shadow-2xl">
+          <h2 className="font-heading text-3xl sm:text-5xl font-black text-white">
+            Ready for their next little breakthrough?
           </h2>
-          <div className="space-y-4">
-            {FAQS.map((faq) => (
-              <Card key={faq.q} padding="md" variant="outline" className="border-gray-100/50">
-                <CardTitle className="text-base font-medium text-gray-800">{faq.q}</CardTitle>
-                <CardDescription className="mt-2">{faq.a}</CardDescription>
-              </Card>
-            ))}
+          <p className="text-xs sm:text-base text-emerald-100/90 max-w-lg mx-auto">
+            Bring more purpose to playtime with PAWPATH.
+          </p>
+          <div>
+            <button
+              onClick={handleAddToCart}
+              className="px-8 py-4 rounded-full bg-[#0da162] hover:bg-[#0a8650] text-white font-heading font-extrabold text-sm sm:text-base shadow-xl transition hover:scale-105 active:scale-95 inline-flex items-center gap-2"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              <span>Add to Cart — {formatINR(PRODUCT.price * quantity)}</span>
+            </button>
           </div>
         </div>
       </section>
 
-      <Footer />
+      {/* Lightbox Zoom Modal */}
+      {isZoomOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+          <div className="relative w-full max-w-5xl aspect-[4/3] rounded-3xl overflow-hidden bg-black">
+            <Image
+              src={GALLERY_IMAGES[selectedImg].src}
+              alt={GALLERY_IMAGES[selectedImg].alt}
+              fill
+              className="object-contain"
+            />
+            <button
+              onClick={() => setIsZoomOpen(false)}
+              className="absolute top-4 right-4 p-3 rounded-full bg-white/20 hover:bg-white/40 text-white transition"
+              aria-label="Close modal"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Sticky Purchase Bar */}
+      {showStickyBar && (
+        <div className="fixed bottom-0 inset-x-0 z-40 bg-[#0a3824]/95 backdrop-blur-md text-white border-t-2 border-emerald-500/40 py-3 px-4 shadow-2xl transition-all duration-300">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white/10 border border-emerald-400/40 flex-shrink-0">
+                <Image
+                  src="/images/products/hero.webp"
+                  alt="PAWPATH Mat"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <span className="font-heading font-extrabold text-sm text-white block">
+                  {PRODUCT.name}
+                </span>
+                <span className="text-xs text-emerald-200/80">
+                  Free Standard Delivery Included
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="font-heading font-black text-lg text-white hidden sm:inline">
+                {formatINR(PRODUCT.price * quantity)}
+              </span>
+              <button
+                onClick={handleAddToCart}
+                className="px-6 py-2.5 rounded-full bg-[#0da162] hover:bg-[#0a8650] text-white font-heading font-bold text-xs sm:text-sm shadow-md transition hover:scale-105"
+              >
+                Add to Cart ({formatINR(PRODUCT.price * quantity)})
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function CheckAdded() {
-  return (
-    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M5 13l4 4L19 7"
-      />
-    </svg>
-  );
-}
-
-function TargetIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
-    </svg>
-  );
-}
-function ClockIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-    </svg>
-  );
-}

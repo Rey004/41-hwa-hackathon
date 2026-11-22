@@ -1,223 +1,249 @@
-export const SITE_NAME = "Pawpath";
-export const TAGLINE = "Every pawstep learns something.";
-export const CURRENCY = "USD";
+export const SITE_URL = "https://41-hwa-hackathon.vercel.app";
 
-export const PRODUCT = {
-  id: "pawpath-mat",
-  slug: "pawpath",
-  name: "Pawpath Training Mat",
-  tagline: "One mat. Many milestones.",
+export interface TrainingZone {
+  id: string;
+  name: string;
+  eyebrow: string;
+  tagline: string;
+  description: string;
+  dogSkill: string;
+  ownerCue: string;
+  icon: string;
+  position: { x: number; y: number };
+  badgeText: string;
+  image: string;
+}
+
+export interface ProductConfig {
+  name: string;
+  eyebrow: string;
+  headline: string;
+  tagline: string;
+  description: string;
+  price: number;
+  originalPrice: number;
+  savings: number;
+  freeShippingThreshold: number;
+  highlights: string[];
+  dimensions: string;
+  construction: string;
+  material: string;
+  surface: string;
+  base: string;
+  cleaning: string;
+  power: string;
+}
+
+export const PRODUCT: ProductConfig = {
+  name: "The PAWPATH Interactive Training Mat",
+  eyebrow: "INTRODUCING PAWPATH",
+  headline: "One mat. A whole lot to learn.",
+  tagline: "Every pawstep learns something.",
   description:
-    "The all-in-one interactive dog training mat with five permanently built-in learning zones. Designed for puppies and adult dogs, Pawpath turns every play session into purposeful progress.",
-  price: 14900, // $149.00 in cents
-  compareAtPrice: 19900,
-  dimensions: "90 × 60 cm (35.4 × 23.6 in)",
-  weight: "2.1 kg",
-  materials:
-    "Premium non-toxic TPE surface with natural rubber backing. Water-resistant, chew-resistant, and machine-washable.",
-  care: "Wipe clean with a damp cloth or hand wash with mild soap. Air dry flat.",
-  sku: "PAWPATH-MAT-001",
-  inStock: true,
-  images: [
-    {
-      id: "hero",
-      url: "/images/products/hero.svg",
-      alt: "Pawpath training mat full view",
-      primary: true,
-    },
-    {
-      id: "zone-target",
-      url: "/images/products/zone-target.svg",
-      alt: "Target zone for touch and paw commands",
-    },
-    {
-      id: "zone-place",
-      url: "/images/products/zone-place.svg",
-      alt: "Place zone for sit and down",
-    },
-    {
-      id: "zone-wot",
-      url: "/images/products/zone-wot.svg",
-      alt: "Wot zone for patience and stay",
-    },
-    {
-      id: "zone-pathway",
-      url: "/images/products/zone-pathway.svg",
-      alt: "Pathway zone for follow and return",
-    },
-    {
-      id: "zone-reward",
-      url: "/images/products/zone-reward.svg",
-      alt: "Reward zone for positive reinforcement",
-    },
-    {
-      id: "lifestyle",
-      url: "/images/products/lifestyle.svg",
-      alt: "Golden retriever on Pawpath mat",
-    },
+    "Meet the all-in-one training mat designed to make practising everyday commands and good habits more engaging. Five integrated zones bring different training activities together in one thoughtfully designed product.",
+  price: 3499,
+  originalPrice: 4299,
+  savings: 800,
+  freeShippingThreshold: 1999,
+  highlights: [
+    "Five integrated training zones.",
+    "Single-piece construction.",
+    "Tactile training surfaces.",
+    "No electricity required.",
   ],
+  dimensions: "Approximately 90 × 60 cm (35.4″ × 23.6″)",
+  construction: "Single integrated component with beveled anti-curl perimeter",
+  material: "Premium Non-Toxic Food-Grade Silicone & Natural Vulcanized Rubber",
+  surface: "Multi-textured concentric ribs, grip nubs and directional corridors",
+  base: "High-traction anti-slip anchor base (safe on hardwood, tile & carpets)",
+  cleaning:
+    "Wipe clean with a damp cloth or rinse with mild soapy water. Fast air-drying in 15 minutes.",
+  power: "No electricity or batteries required. Physical, owner-guided learning.",
 };
 
-export const TRAINING_ZONES = [
+export const ZONES: TrainingZone[] = [
   {
     id: "target",
-    name: "Target",
-    title: "Touch & Paw Commands",
-    color: "bg-organic-green",
+    name: "TARGET ZONE",
+    eyebrow: "01 / PRECISION",
+    tagline: "Make the first move.",
     description:
-      "A dedicated contact point that teaches your dog to touch with nose or paw on cue — the foundation of precision targeting.",
+      "A tactile target for practising nose touches, paw interactions and following cues.",
+    dogSkill: "Nose targeting, paw touch, directional focus",
+    ownerCue: '"Touch!" / "Paw!"',
     icon: "Target",
+    position: { x: 22, y: 30 },
+    badgeText: "Tactile Target",
+    image: "/images/products/zone-target.webp",
   },
   {
     id: "place",
-    name: "Place",
-    title: "Sit & Down",
-    color: "bg-pale-mint",
+    name: "PLACE ZONE",
+    eyebrow: "02 / BOUNDARY",
+    tagline: "Find your spot.",
     description:
-      "A clearly bounded zone that reinforces sit and down stays, building impulse control and calm behavior.",
-    icon: "LayoutGrid",
+      "A dedicated space to practise sitting, lying down and settling in one place.",
+    dogSkill: "Boundary settle, door calm, impulse rest",
+    ownerCue: '"Place!" / "Settle!"',
+    icon: "Home",
+    position: { x: 74, y: 38 },
+    badgeText: "Cushioned Sanctuary",
+    image: "/images/products/zone-place.webp",
   },
   {
-    id: "wot",
-    name: "Wot",
-    title: "Patience & Stay",
-    color: "bg-forest-green",
+    id: "wait",
+    name: "WAIT ZONE",
+    eyebrow: "03 / PATIENCE",
+    tagline: "Good things take patience.",
     description:
-      "The waiting zone. Teaches patience, duration, and reliable stay commands even with distractions nearby.",
+      "A defined training area for building patience, practising stays and learning release cues.",
+    dogSkill: "Duration hold, threshold pause, release command",
+    ownerCue: '"Wait..." -> "Free!"',
     icon: "Clock",
+    position: { x: 48, y: 65 },
+    badgeText: "Calibrated Markers",
+    image: "/images/products/zone-wait.webp",
   },
   {
     id: "pathway",
-    name: "Pathway",
-    title: "Follow & Return",
-    color: "bg-coral",
+    name: "PATHWAY ZONE",
+    eyebrow: "04 / GUIDANCE",
+    tagline: "Follow the pawsteps.",
     description:
-      "A guided corridor that shapes follow, heel, and return-to-hand behaviors through directional movement.",
-    icon: "ArrowRight",
+      "Integrated paw patterns that encourage dogs to follow directions and move between activities.",
+    dogSkill: "Heel alignment, focused recall, direction changes",
+    ownerCue: '"Here!" / "Heel!"',
+    icon: "Compass",
+    position: { x: 48, y: 22 },
+    badgeText: "Directional Corridor",
+    image: "/images/products/zone-pathway.webp",
   },
   {
     id: "reward",
-    name: "Reward",
-    title: "Positive Reinforcement",
-    color: "bg-organic-green",
+    name: "REWARD ZONE",
+    eyebrow: "05 / REINFORCEMENT",
+    tagline: "Every good move deserves a little praise.",
     description:
-      "The celebration zone where every success is marked and rewarded, keeping motivation high.",
-    icon: "Heart",
+      "A designated area for positive reinforcement after successful interactions.",
+    dogSkill: "Gentle food taking, dopamine pairing, calm completion",
+    ownerCue: '"Yes!" / *Marker*',
+    icon: "Sparkles",
+    position: { x: 20, y: 76 },
+    badgeText: "Reinforcement Dock",
+    image: "/images/products/zone-reward.webp",
   },
 ];
 
-export const LEARNING_CATEGORIES = [
+export const HOW_IT_WORKS = [
   {
-    id: "obedience",
-    name: "Obedience",
-    count: "6 commands",
+    step: "01",
+    title: "CHOOSE A LESSON",
+    description: "Pick a behaviour you'd like to practise.",
+  },
+  {
+    step: "02",
+    title: "GIVE THE CUE",
+    description: "Use a familiar verbal command or hand signal.",
+  },
+  {
+    step: "03",
+    title: "MAKE IT REWARDING",
+    description: "Guide your dog and reward the behaviour you want to reinforce.",
+  },
+  {
+    step: "04",
+    title: "REPEAT & PROGRESS",
+    description: "Practise regularly and gradually build consistency.",
+  },
+];
+
+export const TRAINING_STAGES = [
+  {
+    id: "puppy",
+    title: "PUPPY — THE FIRST PAWSTEPS",
+    badge: "8-16 WEEKS",
     description:
-      "Sit, down, stay, come, heel and leave it — the everyday essentials that make shared spaces a pleasure.",
-    tone: "forest",
+      "Start with simple commands, touch interactions and getting comfortable with training.",
+    skills: ["Target touches", "Voluntary sit", "Short boundary rest"],
+    image: "/images/products/stage-puppy.webp",
   },
   {
-    id: "impulse",
-    name: "Impulse Control",
-    count: "4 behaviours",
+    id: "learner",
+    title: "LEARNER — GETTING THE HANG OF IT",
+    badge: "4-12 MONTHS",
     description:
-      "Wait at the door, ignore dropped food, settle on the mat and stop barking. Calm is a trainable skill.",
-    tone: "mint",
+      "Practise waiting, staying, following directions and responding to familiar cues.",
+    skills: ["Doorbell settle", "Step-back stays", "Pathway recall runway"],
+    image: "/images/products/stage-learner.webp",
   },
   {
-    id: "scentwork",
-    name: "Scent & Tracking",
-    count: "3 games",
+    id: "well-mannered",
+    title: "WELL-MANNERED — MAKING IT A HABIT",
+    badge: "1+ YEARS",
     description:
-      "Find it, hide it and trail it — channel your dog's nose into structured, satisfying problem solving.",
-    tone: "coral",
-  },
-  {
-    id: "tricks",
-    name: "Tricks & Motion",
-    count: "8 tricks",
-    description:
-      "Spin, bow, paw, cross and the rest — physical tasks that build coordination, confidence and focus.",
-    tone: "green",
+      "Reinforce familiar commands, settling behaviours and everyday routines.",
+    skills: ["Dinner table boundary", "Compound drills", "Mental enrichment"],
+    image: "/images/products/stage-adult.webp",
   },
 ];
 
-export const TRAINING_STEPS = [
+export const HOMEPAGE_FAQS = [
   {
-    step: 1,
-    title: "Unroll & Introduce",
-    body: "Lay the mat flat in a quiet area. Let your dog sniff and explore at their own pace.",
+    question: "What is PAWPATH?",
+    answer:
+      "PAWPATH is an interactive dog-training mat with five integrated zones designed to support owner-guided obedience and everyday manners training.",
   },
   {
-    step: 2,
-    title: "Mark the Zone",
-    body: "Use a treat to guide your dog onto each zone, pairing the action with a clear cue word.",
+    question: "What can my dog learn?",
+    answer:
+      "You can practise foundational commands such as sit, down, stay, come, touch and paw, alongside behaviours such as waiting, settling and following directions.",
   },
   {
-    step: 3,
-    title: "Reward & Repeat",
-    body: "Mark success immediately with praise and a treat from the reward zone. Short, daily sessions work best.",
+    question: "Is it suitable for puppies?",
+    answer:
+      "It can be introduced to puppies using short, age-appropriate and positive training sessions.",
   },
   {
-    step: 4,
-    title: "Build Milestones",
-    body: "Combine zones into sequences. Watch confidence grow as your dog masters each new skill.",
-  },
-];
-
-export const LEARNING_STAGES = [
-  {
-    stage: "Puppy (8–16 weeks)",
-    focus: "Socialization & basics",
-    zones: ["target", "reward"],
-    goal: "Confidence and name recognition",
+    question: "Does it require electricity?",
+    answer:
+      "No. PAWPATH is designed as a physical, non-electronic training mat.",
   },
   {
-    stage: "Junior (4–8 months)",
-    focus: "Obedience foundations",
-    zones: ["place", "wot", "pathway"],
-    goal: "Sit, down, stay, and recall",
-  },
-  {
-    stage: "Adult (8+ months)",
-    focus: "Advanced skills",
-    zones: ["all"],
-    goal: "Multi-step sequences and reliability",
+    question: "Does it replace a professional dog trainer?",
+    answer:
+      "No. PAWPATH is a training aid. Professional guidance may still be useful for complex behavioural challenges.",
   },
 ];
 
-export const SPECIFICATIONS = [
-  { label: "Dimensions", value: "90 × 60 cm (35.4 × 23.6 in)" },
-  { label: "Thickness", value: "6 mm" },
-  { label: "Weight", value: "2.1 kg" },
-  { label: "Surface", value: "Non-toxic TPE" },
-  { label: "Backing", value: "Natural rubber" },
-  { label: "Zones", value: "5 permanently built-in" },
-  { label: "Care", value: "Wipe clean / hand wash" },
-  { label: "Origin", value: "Designed for all breeds" },
+export const PRODUCT_PAGE_FAQS = [
+  {
+    question: "What comes in the package?",
+    answer:
+      "Each package includes 1x PAWPATH All-in-One Interactive Dog-Training Mat, 1x Quick-Start Visual Training Guide, and 1x Roll-up Storage Strap.",
+  },
+  {
+    question: "Can puppies use it?",
+    answer:
+      "Yes, with age-appropriate activities and supervised training. Puppies learn boundaries faster through tactile surfaces.",
+  },
+  {
+    question: "Does it need batteries or electricity?",
+    answer:
+      "No, it is a non-electronic physical training product powered completely by owner-dog interaction and positive reinforcement.",
+  },
+  {
+    question: "Can multiple dogs use it?",
+    answer:
+      "It may be used for multiple dogs, but individual training sessions are recommended to avoid distractions and competition.",
+  },
+  {
+    question: "How do I clean it?",
+    answer:
+      "Simply wipe it with warm soapy water and a cloth, or rinse it with a hose outdoors. The waterproof silicone dries within 15 minutes.",
+  },
+  {
+    question: "Can it replace professional training?",
+    answer:
+      "No. It supports everyday training but is not a substitute for professional behavioural guidance.",
+  },
 ];
-
-export const FAQS = [
-  {
-    q: "What age can my dog start using Pawpath?",
-    a: "Puppies as young as 8 weeks can begin with gentle, reward-based introduction. The mat grows with your dog through every life stage.",
-  },
-  {
-    q: "Is the mat safe for chewers?",
-    a: "Yes. The TPE surface is tough, non-toxic, and designed to withstand regular use. Always supervise play and replace if heavily damaged.",
-  },
-  {
-    q: "How do I clean the mat?",
-    a: "Wipe with a damp cloth and mild soap, or hand wash and air dry flat. Avoid harsh chemicals and machine drying.",
-  },
-  {
-    q: "Does it work for all breeds?",
-    a: "Absolutely. The 90 × 60 cm size suits small to large breeds, and the zone-based approach adapts to any dog's learning style.",
-  },
-  {
-    q: "Is this a replacement for professional training?",
-    a: "Pawpath complements professional training by giving you a structured, consistent tool for daily practice at home.",
-  },
-];
-
-export type Product = typeof PRODUCT;
-export type TrainingZone = (typeof TRAINING_ZONES)[number];

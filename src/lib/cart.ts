@@ -1,116 +1,156 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
+import { PRODUCT } from "./products";
+
 export interface CartItem {
-  productId: string;
+  id: string;
   name: string;
+  subtitle?: string;
   price: number;
+  originalPrice?: number;
   quantity: number;
   image: string;
 }
 
-const STORAGE_KEY = "pawpath_cart";
-const EMPTY: CartItem[] = [];
+interface CartState {
+  items: CartItem[];
+  isOpen: boolean;
+}
+
+const STORAGE_KEY = "pawpath_cart_v2";
+
+let state: CartState = {
+  items: [
+    {
+      id: "pawpath-mat",
+      name: PRODUCT.name,
+      subtitle: "Forest Green • 5 Integrated Zones",
+      price: PRODUCT.price,
+      originalPrice: PRODUCT.originalPrice,
+      quantity: 1,
+      image: "/images/products/hero.webp",
+    },
+  ],
+  isOpen: false,
+};
+
+// Initialize from localStorage in browser
+if (typeof window !== "undefined") {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      state.items = JSON.parse(raw);
+    }
+  } catch {
+    // fallback to initial
+  }
+}
 
 const listeners = new Set<() => void>();
-let snapshot: CartItem[] | null = null;
 
-function readStorage(): CartItem[] {
-  if (typeof window === "undefined") return EMPTY;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return EMPTY;
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return EMPTY;
-    return parsed as CartItem[];
-  } catch {
-    return EMPTY;
-  }
-}
-
-function writeStorage(items: CartItem[]): void {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  } catch {
-    return;
-  }
-}
-
-function commit(items: CartItem[]): CartItem[] {
-  writeStorage(items);
-  snapshot = items;
-  listeners.forEach((listener) => listener());
-  return items;
-}
-
-export function getCartSnapshot(): CartItem[] {
-  if (snapshot === null) {
-    snapshot = readStorage();
-  }
-  return snapshot;
-}
-
-export function getCartServerSnapshot(): CartItem[] {
-  return EMPTY;
-}
-
-export function subscribeToCart(listener: () => void): () => void {
-  listeners.add(listener);
-  const handleStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY) {
-      snapshot = null;
-      listener();
+function notify() {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items));
+    } catch {
+      // ignore
     }
+  }
+  listeners.forEach((listener) => listener());
+}
+
+export const cartStore = {
+  getSnapshot(): CartState {
+    return state;
+  },
+
+  subscribe(listener: () => void) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  },
+
+  openCart() {
+    state = { ...state, isOpen: true };
+    notify();
+  },
+
+  closeCart() {
+    state = { ...state, isOpen: false };
+    notify();
+  },
+
+  addItem(item: Omit<CartItem, "quantity"> & { quantity?: number }) {
+    const qty = item.quantity || 1;
+    const existing = state.items.find((i) => i.id === item.id);
+    let newItems: CartItem[];
+
+    if (existing) {
+      newItems = state.items.map((i) =>
+        i.id === item.id ? { ...i, quantity: i.quantity + qty } : i
+      );
+    } else {
+      newItems = [...state.items, { ...item, quantity: qty }];
+    }
+
+    state = { items: newItems, isOpen: true };
+    notify();
+  },
+
+  removeItem(id: string) {
+    state = {
+      ...state,
+      items: state.items.filter((i) => i.id !== id),
+    };
+    notify();
+  },
+
+  updateQuantity(id: string, delta: number) {
+    const newItems = state.items
+      .map((i) => {
+        if (i.id === id) {
+          const newQty = i.quantity + delta;
+          return newQty > 0 ? { ...i, quantity: newQty } : null;
+        }
+        return i;
+      })
+      .filter(Boolean) as CartItem[];
+
+    state = { ...state, items: newItems };
+    notify();
+  },
+
+  clearCart() {
+    state = { ...state, items: [] };
+    notify();
+  },
+};
+
+export function useCart() {
+  const current = useSyncExternalStore(
+    cartStore.subscribe,
+    cartStore.getSnapshot,
+    // Server snapshot
+    () => ({ items: [], isOpen: false })
+  );
+
+  const itemCount = current.items.reduce((acc, i) => acc + i.quantity, 0);
+  const subtotal = current.items.reduce((acc, i) => acc + i.price * i.quantity, 0);
+  const shipping = subtotal >= PRODUCT.freeShippingThreshold || subtotal === 0 ? 0 : 199;
+  const total = subtotal + shipping;
+
+  return {
+    items: current.items,
+    isOpen: current.isOpen,
+    openCart: cartStore.openCart,
+    closeCart: cartStore.closeCart,
+    addItem: cartStore.addItem,
+    removeItem: cartStore.removeItem,
+    updateQuantity: cartStore.updateQuantity,
+    clearCart: cartStore.clearCart,
+    itemCount,
+    subtotal,
+    shipping,
+    total,
   };
-  window.addEventListener("storage", handleStorage);
-  return () => {
-    listeners.delete(listener);
-    window.removeEventListener("storage", handleStorage);
-  };
-}
-
-export function loadCart(): CartItem[] {
-  return getCartSnapshot();
-}
-
-export function saveCart(items: CartItem[]): CartItem[] {
-  return commit(items);
-}
-
-export function addToCart(
-  item: Omit<CartItem, "quantity"> & { quantity?: number }
-): CartItem[] {
-  const items = getCartSnapshot();
-  const existing = items.find((i) => i.productId === item.productId);
-  const next: CartItem[] = existing
-    ? items.map((i) =>
-        i.productId === item.productId
-          ? { ...i, quantity: i.quantity + (item.quantity ?? 1) }
-          : i
-      )
-    : [...items, { ...item, quantity: item.quantity ?? 1 }];
-  return commit(next);
-}
-
-export function updateQuantity(productId: string, quantity: number): CartItem[] {
-  const items = getCartSnapshot();
-  const next = items
-    .map((i) =>
-      i.productId === productId ? { ...i, quantity: Math.max(0, quantity) } : i
-    )
-    .filter((i) => i.quantity > 0);
-  return commit(next);
-}
-
-export function removeFromCart(productId: string): CartItem[] {
-  const items = getCartSnapshot().filter((i) => i.productId !== productId);
-  return commit(items);
-}
-
-export function clearCart(): void {
-  commit(EMPTY);
-}
-
-export function cartTotals(items: CartItem[]) {
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
-  return { subtotal, itemCount };
 }

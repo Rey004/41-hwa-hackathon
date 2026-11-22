@@ -1,118 +1,152 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
-import { Menu, ShoppingBag, Search, PawPrint } from "lucide-react";
-import { CartDrawer } from "@/components/cart-drawer";
+import { usePathname } from "next/navigation";
 import {
-  cartTotals,
-  getCartServerSnapshot,
-  getCartSnapshot,
-  subscribeToCart,
-} from "@/lib/cart";
+  ShoppingBag,
+  Menu,
+  X,
+  ArrowRight,
+  PawPrint,
+} from "lucide-react";
+import { useCart } from "@/lib/cart";
 
-const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/product/pawpath", label: "The Mat" },
-];
+export const Header: React.FC = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { openCart, itemCount } = useCart();
+  const pathname = usePathname();
 
-export function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  const items = useSyncExternalStore(
-    subscribeToCart,
-    getCartSnapshot,
-    getCartServerSnapshot
-  );
-  const { itemCount } = cartTotals(items);
+  const navLinks = [
+    { label: "Home", href: "/" },
+    { label: "The Experience", href: "/#experience" },
+    { label: "What They'll Learn", href: "/#what-they-learn" },
+    { label: "How It Works", href: "/#how-it-works" },
+    { label: "FAQ", href: "/#faq" },
+  ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/85 backdrop-blur-md border-b border-gray-100/60">
-      <div className="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className="flex items-center gap-2 shrink-0"
-          aria-label="Pawpath home"
-        >
-          <PawPrint className="h-7 w-7 text-forest-green fill-forest-green" />
-          <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-tighter">
-            PAWPATH
-          </span>
-        </Link>
-
-        <nav className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-gray-600 hover:text-forest-green transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <Link
-            href="/product/pawpath"
-            className="px-5 py-2 rounded-full bg-forest-green text-white text-sm font-medium hover:bg-organic-green-dark transition-colors"
-          >
-            Shop the Mat
-          </Link>
-        </nav>
-
-        <div className="flex items-center gap-3 sm:gap-4">
-          <Link
-            href="/product/pawpath"
-            className="text-gray-400 hover:text-forest-green transition-colors"
-            aria-label="Search products"
-          >
-            <Search className="h-5 w-5" />
-          </Link>
-          <button
-            onClick={() => setCartOpen(true)}
-            className="relative text-gray-400 hover:text-forest-green transition-colors"
-            aria-label={`Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}`}
-          >
-            <ShoppingBag className="h-5 w-5" />
-            {itemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-coral text-white text-[10px] font-heading font-bold flex items-center justify-center">
-                {itemCount}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => setMenuOpen((v) => !v)}
-            className="md:hidden text-gray-400 hover:text-gray-600"
-            aria-label="Toggle menu"
-            aria-expanded={menuOpen}
-          >
-            <Menu className="h-5 w-5" />
-          </button>
-        </div>
+    <>
+      {/* Top Announcement Bar */}
+      <div className="bg-[#0a3824] text-white text-[11px] sm:text-xs font-semibold py-2 px-4 text-center tracking-wide flex items-center justify-center gap-2 border-b border-emerald-900/60">
+        <span>
+          <strong>Every pawstep learns something.</strong> Free Standard Delivery on all PAWPATH mats.
+        </span>
+        <span className="hidden md:inline text-emerald-300 ml-2">
+          • Owner-Guided Positive Reinforcement Aid
+        </span>
       </div>
 
-      {menuOpen && (
-        <nav className="md:hidden border-t border-gray-100 bg-white px-6 py-4 space-y-1">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className="block py-2 text-sm font-medium text-gray-600 hover:text-forest-green transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <Link
-            href="/product/pawpath"
-            onClick={() => setMenuOpen(false)}
-            className="block py-2 text-sm font-medium text-forest-green"
-          >
-            Shop the Mat
+      {/* Main Sticky Header */}
+      <header
+        className={`sticky top-0 z-40 transition-all duration-300 ${
+          scrolled
+            ? "bg-[#faf8f3]/95 backdrop-blur-md shadow-sm py-3 border-b border-[#e2ece5]"
+            : "bg-[#faf8f3] py-4"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <span className="w-8 h-8 rounded-xl bg-[#0a3824] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              <PawPrint className="w-4 h-4 text-white" />
+            </span>
+            <span className="font-heading text-2xl font-black tracking-tight text-[#0a3824] flex items-center">
+              PAWPATH
+              <span className="w-2 h-2 rounded-full bg-[#0da162] inline-block ml-0.5" />
+            </span>
           </Link>
-        </nav>
-      )}
 
-      <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
-    </header>
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-1.5 bg-white px-5 py-1.5 rounded-full border border-[#dbe7df] shadow-sm">
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="px-3.5 py-1.5 rounded-full text-xs font-bold text-gray-700 hover:text-emerald-950 hover:bg-emerald-50 transition"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-3">
+            {/* Primary CTA */}
+            <Link
+              href="/product/pawpath"
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0a3824] hover:bg-[#062417] text-white text-xs font-heading font-bold shadow-sm transition hover:scale-[1.02]"
+            >
+              <span>Explore PAWPATH</span>
+              <ArrowRight className="w-3.5 h-3.5 text-emerald-300" />
+            </Link>
+
+            {/* Cart Trigger */}
+            <button
+              onClick={openCart}
+              className="relative p-2.5 rounded-full bg-white hover:bg-emerald-50 border border-[#dbe7df] text-[#0a3824] transition shadow-sm"
+              aria-label="View Cart"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#0da162] text-white text-[11px] font-black flex items-center justify-center shadow">
+                  {itemCount}
+                </span>
+              )}
+            </button>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-xl text-gray-700 hover:bg-gray-100 transition"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden bg-white border-b border-gray-200 px-6 py-5 shadow-lg">
+            <nav className="flex flex-col gap-3">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2 text-sm font-bold text-gray-800 hover:text-emerald-700 transition"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <div className="pt-3 border-t border-gray-100">
+                <Link
+                  href="/product/pawpath"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 rounded-full bg-[#0a3824] text-white text-center font-bold text-sm shadow-md flex items-center justify-center gap-2"
+                >
+                  <span>Explore PAWPATH</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </nav>
+          </div>
+        )}
+      </header>
+    </>
   );
-}
+};

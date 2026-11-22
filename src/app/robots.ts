@@ -1,12 +1,15 @@
-import type { MetadataRoute } from "next";
+import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/products";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: ["/checkout", "/order-confirmation", "/api/"],
-    },
-    sitemap: "https://41-hwa-hackathon.vercel.app/sitemap.xml",
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/checkout", "/order-confirmation", "/api/"],
+      },
+    ],
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

@@ -1,16 +1,44 @@
 import { z } from "zod";
 
-export const checkoutSchema = z.object({
-  firstName: z.string().min(2, "Please enter your first name"),
-  lastName: z.string().min(2, "Please enter your last name"),
+export const CheckoutSchema = z.object({
+  fullName: z.string().min(2, "Please enter your full name"),
   email: z.string().email("Please enter a valid email address"),
-  phone: z.string().min(7, "Please enter a valid phone number"),
-  address: z.string().min(5, "Please enter your street address"),
-  city: z.string().min(2, "Please enter your city"),
-  state: z.string().min(2, "Please enter your state or province"),
-  postalCode: z.string().min(3, "Please enter a valid postal code"),
-  country: z.string().min(2, "Please select a country"),
-  terms: z.boolean().refine((val) => val === true, "You must accept the terms and conditions"),
+  phone: z.string().min(10, "Please enter a valid 10-digit mobile number"),
+  houseBuilding: z.string().min(2, "House / Flat / Building is required"),
+  streetArea: z.string().min(4, "Street / Area is required"),
+  city: z.string().min(2, "City is required"),
+  state: z.string().min(2, "State is required"),
+  pinCode: z.string().regex(/^[0-9]{6}$/, "Enter a valid 6-digit PIN code"),
+  country: z.string().min(1, "Country is required"),
+  deliveryMethod: z.enum(["standard", "express"]),
+  paymentMethod: z.enum(["simulated_upi", "simulated_card", "simulated_cod"]),
 });
 
-export type CheckoutFormValues = z.infer<typeof checkoutSchema>;
+export type CheckoutFormData = z.infer<typeof CheckoutSchema>;
+
+export const OrderApiSchema = z.object({
+  customer: z.object({
+    fullName: z.string().min(2),
+    email: z.string().email(),
+    phone: z.string().min(10),
+    houseBuilding: z.string().min(2),
+    streetArea: z.string().min(4),
+    city: z.string().min(2),
+    state: z.string().min(2),
+    pinCode: z.string().min(4),
+    country: z.string().default("India"),
+  }),
+  items: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      price: z.number().positive(),
+      quantity: z.number().int().positive(),
+      image: z.string(),
+    })
+  ).min(1, "Your cart is currently empty."),
+  deliveryMethod: z.enum(["standard", "express"]),
+  paymentMethod: z.string(),
+});
+
+export type OrderApiPayload = z.infer<typeof OrderApiSchema>;

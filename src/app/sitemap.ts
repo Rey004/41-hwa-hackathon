@@ -1,17 +1,18 @@
-import type { MetadataRoute } from "next";
-
-const BASE_URL = "https://41-hwa-hackathon.vercel.app";
+import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/products";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = SITE_URL;
+
   return [
     {
-      url: BASE_URL,
+      url: baseUrl,
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 1,
+      priority: 1.0,
     },
     {
-      url: `${BASE_URL}/product/pawpath`,
+      url: `${baseUrl}/product/pawpath`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,

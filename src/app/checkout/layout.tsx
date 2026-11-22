@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Checkout — Pawpath",
-  description: "Complete your order for the Pawpath Training Mat.",
-  robots: { index: false, follow: false },
+  title: "Checkout — Complete Your PAWPATH Order",
+  description: "Secure checkout for The PAWPATH Interactive Dog Training Mat. Fast delivery across India.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function CheckoutLayout({
@@ -11,5 +14,5 @@ export default function CheckoutLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <>{children}</>;
 }
