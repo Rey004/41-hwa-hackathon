@@ -36,6 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# hackathon setup files (never commit or deploy)
+.hwa/
+init.py
+init (*).py
+submit.py
+hwa-start.*
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

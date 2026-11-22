@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <rect width="300" height="300" fill="#f0fdfa" rx="40"/>
+  <rect x="40" y="100" width="220" height="100" fill="#fb7185" rx="16"/>
+  <text x="150" y="155" font-family="Manrope, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="bold">Pathway</text>
+</svg>
