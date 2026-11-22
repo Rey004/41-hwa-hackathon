@@ -1,70 +1,96 @@
 import Link from "next/link";
+import { PawPrint } from "lucide-react";
 
 const YEAR = new Date().getFullYear();
 
-const FOOTER_LINKS = [
-  { label: "Shop", href: "/product/pawpath" },
-  { label: "How it works", href: "/product/pawpath" },
-  { label: "Training guide", href: "/" },
-  { label: "FAQ", href: "/" },
-  { label: "Contact", href: "/" },
-  { label: "Shipping & returns", href: "/" },
-];
-
-const LEGAL_LINKS = [
-  { label: "Privacy policy", href: "/" },
-  { label: "Terms of service", href: "/" },
-  { label: "Accessibility", href: "/" },
+const COLUMNS = [
+  {
+    title: "Shop",
+    links: [
+      { label: "The Pawpath Mat", href: "/product/pawpath" },
+      { label: "Gift a mat", href: "/product/pawpath" },
+      { label: "Shipping & returns", href: "/product/pawpath" },
+    ],
+  },
+  {
+    title: "Learn",
+    links: [
+      { label: "How it works", href: "/#zones" },
+      { label: "Training guide", href: "/#zones" },
+      { label: "FAQ", href: "/#zones" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "Our story", href: "/#zones" },
+      { label: "Sustainability", href: "/#zones" },
+      { label: "Contact", href: "/#zones" },
+    ],
+  },
 ];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-100 bg-ivory">
-      <div className="px-6 py-12 lg:px-12 lg:py-16">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
-              <svg className="h-6 w-6 text-forest-green fill-forest-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="M10 20v-6l4 4 4-4v6" />
-                <path d="M10 2H2v16l8-8-8-8z" />
-              </svg>
-              <span className="font-heading font-bold text-xl tracking-tighter">PAWPATH</span>
-            </div>
-            <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
-              Every pawstep learns something. Premium interactive training for dogs
-              of every age.
-            </p>
-          </div>
-          {FOOTER_LINKS.map((link) => (
-            <div key={link.label}>
-              <h3 className="text-xs font-heading font-semibold uppercase tracking-widest text-gray-400 mb-4">
-                {link.label}
-              </h3>
-              <Link
-                href={link.href}
-                className="block text-sm text-gray-600 hover:text-forest-green transition-colors mb-2"
-              >
-                {link.label}
+    <footer className="border-t border-gray-100 bg-forest-green text-white">
+      <div className="px-6 py-16 lg:px-12 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-5">
+              <Link href="/" className="inline-flex items-center gap-2.5">
+                <PawPrint className="h-8 w-8 fill-organic-green text-organic-green" />
+                <span className="font-heading font-extrabold text-2xl tracking-tighter">
+                  PAWPATH
+                </span>
               </Link>
+              <p className="mt-6 max-w-sm text-lg leading-relaxed text-white/70">
+                Every pawstep learns something. Premium interactive training for
+                dogs of every age, in every home.
+              </p>
+              <p className="mt-8 text-[11px] font-heading font-bold uppercase tracking-[0.2em] text-organic-green">
+                Playtime with a little more purpose
+              </p>
             </div>
-          ))}
-        </div>
 
-        <div className="max-w-7xl mx-auto border-t border-gray-200/50 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-gray-400">
-              © {YEAR} Pawpath. All rights reserved.
-            </p>
-            <div className="flex gap-4">
-              {LEGAL_LINKS.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-xs text-gray-400 hover:text-forest-green transition-colors"
-                >
-                  {link.label}
-                </Link>
+            <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-6 lg:col-start-7">
+              {COLUMNS.map((column) => (
+                <div key={column.title}>
+                  <h3 className="mb-5 text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-white/40">
+                    {column.title}
+                  </h3>
+                  <ul className="space-y-3">
+                    {column.links.map((link) => (
+                      <li key={link.label}>
+                        <Link
+                          href={link.href}
+                          className="text-sm text-white/70 transition-colors hover:text-organic-green"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
+            </div>
+          </div>
+
+          <div className="mt-16 flex flex-col gap-5 border-t border-white/10 pt-8 md:flex-row md:items-center md:justify-between">
+            <p className="text-xs text-white/40">
+              © {YEAR} Pawpath. Every pawstep counts.
+            </p>
+            <div className="flex flex-wrap gap-6">
+              {["Privacy policy", "Terms of service", "Accessibility"].map(
+                (label) => (
+                  <Link
+                    key={label}
+                    href="/"
+                    className="text-xs text-white/40 transition-colors hover:text-organic-green"
+                  >
+                    {label}
+                  </Link>
+                )
+              )}
             </div>
           </div>
         </div>

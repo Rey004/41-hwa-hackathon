@@ -1,20 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, PawPrint, Truck, ShieldCheck, Check } from "lucide-react";
+import { ArrowRight, Truck, ShieldCheck, Check, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { PolishedImage } from "@/components/polished-image";
 import { Header } from "@/components/header";
 import Footer from "@/components/footer";
+import { ZoneShowcase } from "@/components/zone-showcase";
 import { addToCart, type CartItem } from "@/lib/cart";
-import { PRODUCT, TRAINING_ZONES, SPECIFICATIONS, FAQS } from "@/lib/products";
+import { PRODUCT, SPECIFICATIONS, FAQS } from "@/lib/products";
 
 export default function ProductPage() {
   const [quantity, setQuantity] = useState(1);
-  const [selectedZone, setSelectedZone] = useState(TRAINING_ZONES[0].id);
+  const [activeImage, setActiveImage] = useState(PRODUCT.images[0].id);
   const [added, setAdded] = useState(false);
+
+  const selectedImage =
+    PRODUCT.images.find((img) => img.id === activeImage) ?? PRODUCT.images[0];
 
   const handleAddToCart = () => {
     const item: Omit<CartItem, "quantity"> & { quantity?: number } = {
@@ -34,140 +37,176 @@ export default function ProductPage() {
       <Header />
 
       {/* Gallery + Buy */}
-      <section className="relative px-6 pt-20 lg:px-12 lg:pt-24 pb-24 lg:pb-32">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-12 gap-8">
+      <section className="relative px-6 pt-12 lg:px-12 lg:pt-16 pb-24 lg:pb-32">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
             {/* Gallery column */}
-            <div className="lg:col-span-5 space-y-6">
-              <div className="relative group rounded-[2rem] overflow-hidden border border-gray-100 bg-gray-50/50 aspect-[3/4]">
+            <div className="lg:col-span-6">
+              <div className="relative group overflow-hidden rounded-[2.5rem] border-8 border-white shadow-xl bg-pale-mint aspect-square">
                 <PolishedImage
-                  src={PRODUCT.images[0].url}
-                  alt={PRODUCT.images[0].alt}
-                  width={600}
+                  src={selectedImage.url}
+                  alt={selectedImage.alt}
+                  width={800}
                   height={800}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   placeholderColor="#dcfce7"
                   priority
                 />
-                <button
-                  className="absolute top-4 right-4 bg-white/90 backdrop-blur rounded-full p-2 shadow-md hover:bg-white transition-colors"
-                  aria-label="Expand image"
-                >
-                  <ArrowRight className="h-5 w-5" />
-                </button>
+                <span className="absolute top-5 left-5 rounded-full bg-white/90 backdrop-blur px-3 py-1.5 text-[10px] font-heading font-bold uppercase tracking-[0.18em] text-forest-green shadow-sm">
+                  {selectedImage.id.replace("zone-", "")}
+                </span>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                {PRODUCT.images.slice(1, 5).map((img) => (
-                  <div
+              <div className="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-5">
+                {PRODUCT.images.slice(0, 5).map((img) => (
+                  <button
                     key={img.id}
-                    className="rounded-[1.5rem] overflow-hidden border border-gray-100 bg-gray-50/50 aspect-square cursor-pointer hover:border-forest-green/50 transition-colors group"
+                    onClick={() => setActiveImage(img.id)}
+                    aria-label={`View ${img.alt}`}
+                    aria-pressed={activeImage === img.id}
+                    className={`overflow-hidden rounded-2xl border-2 bg-pale-mint transition-all ${
+                      activeImage === img.id
+                        ? "border-forest-green shadow-md"
+                        : "border-transparent opacity-70 hover:opacity-100"
+                    }`}
                   >
                     <PolishedImage
                       src={img.url}
                       alt={img.alt}
-                      width={300}
-                      height={300}
-                      className="w-full h-full object-cover"
-                      placeholderColor="#fce7f3"
+                      width={200}
+                      height={200}
+                      className="w-full aspect-square object-cover"
+                      placeholderColor="#fce7ec"
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
 
             {/* Buy column */}
-            <div className="lg:col-span-7 space-y-8">
-              <div>
-                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-organic-green/10 text-organic-green-dark text-[10px] font-heading font-bold uppercase tracking-widest mb-2">
-                  In stock
-                </span>
-                <h1 className="font-heading font-bold text-[3rem] leading-[1.1] text-forest-green mb-4">
-                  {PRODUCT.name}
-                </h1>
-                <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                  {PRODUCT.tagline}
-                </p>
+            <div className="lg:col-span-6">
+              <div className="lg:sticky lg:top-28 space-y-7">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-organic-green/15 px-3 py-1 text-[10px] font-heading font-bold uppercase tracking-[0.18em] text-organic-green-dark mb-4">
+                    <span className="h-1.5 w-1.5 rounded-full bg-organic-green" />
+                    In stock · ships today
+                  </span>
+                  <h1 className="font-heading font-extrabold text-[clamp(2.5rem,5vw,3.75rem)] leading-[1.02] tracking-tight text-forest-green mb-4">
+                    {PRODUCT.name}
+                  </h1>
+                  <p className="text-lg text-gray-600 leading-relaxed mb-7">
+                    {PRODUCT.tagline} {PRODUCT.description}
+                  </p>
 
-                <div className="flex items-baseline gap-4 mb-2">
-                  <span className="font-heading font-bold text-[2rem] text-forest-green">
-                    ${(PRODUCT.price / 100).toFixed(2)}
-                  </span>
-                  <span className="text-sm text-gray-400 line-through">
-                    ${(PRODUCT.compareAtPrice / 100).toFixed(2)}
-                  </span>
-                  <span className="text-xs font-medium text-organic-green-dark bg-organic-green/10 px-2 py-0.5 rounded">
-                    Save ${(((PRODUCT.compareAtPrice - PRODUCT.price) / 100)).toFixed(2)}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-500 mb-6">
-                  {PRODUCT.dimensions} · {PRODUCT.weight} · {PRODUCT.sku}
-                </p>
-
-                <div className="flex items-center gap-4 mb-6">
-                  <label className="text-sm font-medium text-gray-600">Quantity</label>
-                  <div className="flex items-center gap-1 border border-gray-200 rounded-xl overflow-hidden">
-                    <button
-                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                    >
-                        <span>-</span>
-                    </button>
-                    <span className="w-8 text-center font-medium text-gray-800">
-                      {quantity}
+                  <div className="flex items-baseline gap-4 mb-2">
+                    <span className="font-heading font-extrabold text-[2.25rem] leading-none text-forest-green">
+                      ${(PRODUCT.price / 100).toFixed(2)}
                     </span>
-                    <button
-                      onClick={() => setQuantity((q) => q + 1)}
-                      className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                    >
-                      <span>+</span>
-                    </button>
+                    <span className="text-sm text-gray-400 line-through">
+                      ${(PRODUCT.compareAtPrice / 100).toFixed(2)}
+                    </span>
+                    <span className="rounded-full bg-coral-soft px-2.5 py-1 text-[10px] font-heading font-bold uppercase tracking-widest text-coral">
+                      Save ${((PRODUCT.compareAtPrice - PRODUCT.price) / 100).toFixed(0)}
+                    </span>
                   </div>
+                  <p className="text-sm text-gray-500 mb-7">
+                    {PRODUCT.dimensions} · {PRODUCT.weight} · {PRODUCT.sku}
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-4 mb-7">
+                    <span className="text-sm font-heading font-bold uppercase tracking-widest text-gray-500">
+                      Quantity
+                    </span>
+                    <div className="flex items-center border border-gray-200 rounded-full overflow-hidden">
+                      <button
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        disabled={quantity <= 1}
+                        className="w-11 h-11 flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-40"
+                        aria-label="Decrease quantity"
+                      >
+                        <span className="text-lg leading-none">−</span>
+                      </button>
+                      <span className="w-10 text-center font-heading font-bold text-gray-800" aria-live="polite">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity((q) => q + 1)}
+                        className="w-11 h-11 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                        aria-label="Increase quantity"
+                      >
+                        <span className="text-lg leading-none">+</span>
+                      </button>
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      {PRODUCT.inStock ? "Ships in 24 hours" : "Out of stock"}
+                    </span>
+                  </div>
+
+                  <Button
+                    size="lg"
+                    onClick={handleAddToCart}
+                    className="w-full"
+                    disabled={!PRODUCT.inStock}
+                  >
+                    {added ? (
+                      <span className="flex items-center gap-2">
+                        <CheckAdded />
+                        Added to bag
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        Add to Bag · ${((PRODUCT.price * quantity) / 100).toFixed(2)}
+                        <ArrowRight className="h-4 w-4" />
+                      </span>
+                    )}
+                  </Button>
+
+                  {!PRODUCT.inStock && (
+                    <p className="text-sm text-red-500 mt-3">Currently out of stock.</p>
+                  )}
                 </div>
 
-                <Button
-                  size="lg"
-                  onClick={handleAddToCart}
-                  className="w-full"
-                  disabled={!PRODUCT.inStock}
-                >
-                  {added ? (
-                    <div className="flex items-center gap-2">
-                      <CheckAdded />
-                      <span>Added to bag</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <Card padding="sm" className="rounded-2xl bg-pale-mint border border-organic-green/15">
+                    <div className="flex items-center gap-3">
+                      <Truck className="h-5 w-5 text-forest-green flex-none" />
+                      <div>
+                        <p className="text-[10px] font-heading font-bold uppercase tracking-widest text-forest-green">
+                          Free shipping
+                        </p>
+                        <p className="text-sm text-gray-700">On orders over $75</p>
+                      </div>
                     </div>
-                  ) : (
-                    `Add to Bag (${quantity})`
-                  )}
-                </Button>
+                  </Card>
+                  <Card padding="sm" className="rounded-2xl bg-pale-mint border border-organic-green/15">
+                    <div className="flex items-center gap-3">
+                      <ShieldCheck className="h-5 w-5 text-forest-green flex-none" />
+                      <div>
+                        <p className="text-[10px] font-heading font-bold uppercase tracking-widest text-forest-green">
+                          30-day guarantee
+                        </p>
+                        <p className="text-sm text-gray-700">Risk-free trial</p>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
 
-                {!PRODUCT.inStock && (
-                  <p className="text-sm text-red-500 mt-3">Currently out of stock.</p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Card padding="sm" className="bg-pale-mint border border-gray-100/50">
-                  <div className="flex items-center gap-3">
-                    <Truck className="h-5 w-5 text-forest-green" />
-                    <div>
-                      <p className="text-xs text-forest-green-dark font-medium uppercase tracking-widest">
-                        Free shipping
-                      </p>
-                      <p className="text-sm text-gray-800">On orders over $75</p>
-                    </div>
-                  </div>
-                </Card>
-                <Card padding="sm" className="bg-pale-mint border border-gray-100/50">
-                  <div className="flex items-center gap-3">
-                    <ShieldCheck className="h-5 w-5 text-forest-green" />
-                    <div>
-                      <p className="text-xs text-forest-green-dark font-medium uppercase tracking-widest">
-                        30-day guarantee
-                      </p>
-                      <p className="text-sm text-gray-800">Risk-free trial</p>
-                    </div>
-                  </div>
-                </Card>
+                <div className="rounded-[1.75rem] border border-gray-100 bg-white p-6">
+                  <p className="text-[10px] font-heading font-bold uppercase tracking-[0.18em] text-gray-400 mb-4">
+                    Why owners love it
+                  </p>
+                  <ul className="space-y-3">
+                    {[
+                      "Five zones permanently built into one surface",
+                      "Suitable for puppies from 8 weeks to adult dogs",
+                      "Non-toxic, washable and genuinely chew-resistant",
+                    ].map((point) => (
+                      <li key={point} className="flex items-start gap-3 text-sm text-gray-600">
+                        <Check className="h-4 w-4 flex-none mt-0.5 text-organic-green" />
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -175,78 +214,37 @@ export default function ProductPage() {
       </section>
 
       {/* Sticky purchase bar (mobile) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur border-t border-gray-100 p-4 z-40">
-        <div className="max-w-xl mx-auto flex items-center justify-between gap-4">
-          <span className="font-bold text-lg">${(PRODUCT.price / 100).toFixed(2)}</span>
-          <Button size="lg" onClick={handleAddToCart} className="flex-1">
-            {added ? "Added" : "Add to Bag"}
-          </Button>
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-100 px-5 py-4 z-40 flex items-center justify-between gap-4">
+        <div>
+          <p className="font-heading font-extrabold text-lg text-forest-green leading-none">
+            ${((PRODUCT.price * quantity) / 100).toFixed(2)}
+          </p>
+          <p className="text-[10px] font-heading font-bold uppercase tracking-widest text-gray-400 mt-0.5">
+            Qty {quantity}
+          </p>
         </div>
+        <Button size="lg" onClick={handleAddToCart} className="flex-1 max-w-[60%]">
+          {added ? "Added to bag" : "Add to Bag"}
+        </Button>
       </div>
+      <div className="lg:hidden h-20" />
 
       {/* Zone exploration */}
-      <section className="px-6 pb-32 bg-ivory lg:px-12 lg:pb-40">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-start gap-8 mb-16">
-            <div className="flex-shrink-0 w-20 h-20 rounded-full bg-forest-green/10 flex items-center justify-center text-forest-green">
-              <PawPrint className="h-8 w-8" />
-            </div>
-            <div>
-              <h2 className="font-heading font-bold text-[2.5rem] leading-[1.1] text-forest-green mb-2">
-                Interactive zone exploration
-              </h2>
-              <p className="text-gray-600">
-                Five permanently built-in zones. Each one teaches a different skill.
-              </p>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {TRAINING_ZONES.map((zone) => (
-              <button
-                key={zone.id}
-                onClick={() => setSelectedZone(zone.id)}
-                className={`relative group rounded-[2rem] p-6 border transition-all ${
-                  selectedZone === zone.id
-                    ? "bg-forest-green border-forest-green text-white shadow-xl"
-                    : "bg-white border-gray-100 hover:border-forest-green/30 hover:shadow-lg text-gray-800"
-                }`}
-              >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${
-                  selectedZone === zone.id ? "bg-white text-forest-green" : "bg-gray-50 text-gray-400"
-                } group-hover:border-forest-green/50 transition-colors`}
-                >
-                  {zone.icon === "Target" && <TargetIcon className="h-7 w-7" />}
-                  {zone.icon === "LayoutGrid" && <LayoutIcon className="h-7 w-7" />}
-                  {zone.icon === "Clock" && <ClockIcon className="h-7 w-7" />}
-                  {zone.icon === "ArrowRight" && <ArrowRightIcon2 className="h-7 w-7 text-coral" />}
-                  {zone.icon === "Heart" && <HeartIcon className="h-7 w-7 text-organic-green" />}
-                </div>
-                <h3 className="font-heading font-bold text-xl mb-2">
-                  {zone.title}
-                </h3>
-                <p className={`text-sm leading-relaxed ${
-                  selectedZone === zone.id ? "text-white/90" : "text-gray-500"
-                }`}>
-                  {zone.description}
-                </p>
-              </button>
-            ))}
-          </div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="mt-12 p-8 rounded-[2rem] bg-white border border-gray-100"
-          >
-            <CardTitle className="mb-4">{getZoneById(selectedZone).title}</CardTitle>
-            <p className="text-gray-600 leading-relaxed mb-6">
-              {getZoneById(selectedZone).description}
+      <section id="zones" className="px-6 pb-28 bg-ivory lg:px-12 lg:pb-36">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-[11px] font-heading font-bold uppercase tracking-[0.2em] text-organic-green-dark">
+              Interactive exploration
+            </span>
+            <h2 className="mt-4 font-heading font-extrabold text-[clamp(2.25rem,4.5vw,3.5rem)] leading-[1.04] tracking-tight text-forest-green">
+              Explore the five zones
+            </h2>
+            <p className="mt-5 text-lg text-gray-600">
+              Each zone is permanently built into the mat. Select one to see the
+              skill it teaches.
             </p>
-            <div className="flex items-center gap-4 text-sm">
-              <div className="w-2 h-2 rounded-full bg-forest-green" />
-              <span className="font-medium">Tap above to explore each zone</span>
-            </div>
-          </motion.div>
+          </div>
+          <ZoneShowcase />
         </div>
       </section>
 
@@ -284,7 +282,7 @@ export default function ProductPage() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-pale-mint rounded-full blur-3xl -mr-8 -mt-8" />
               <div className="relative z-10">
                 <div className="w-14 h-14 rounded-full bg-forest-green/10 flex items-center justify-center mb-6 text-forest-green">
-                  <HeartIcon className="h-7 w-7 text-organic-green" />
+                  <Heart className="h-7 w-7 text-organic-green" />
                 </div>
                 <CardTitle className="mb-3">Positive reinforcement</CardTitle>
                 <CardDescription>
@@ -394,10 +392,6 @@ export default function ProductPage() {
   );
 }
 
-function getZoneById(id: string) {
-  return TRAINING_ZONES.find((z) => z.id === id) || TRAINING_ZONES[0];
-}
-
 function CheckAdded() {
   return (
     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -418,31 +412,10 @@ function TargetIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-function LayoutIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
-    </svg>
-  );
-}
 function ClockIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-    </svg>
-  );
-}
-function ArrowRightIcon2({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M5 12h14" /><path d="M12 5l7 7-7 7" />
-    </svg>
-  );
-}
-function HeartIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 31c-2 0-4-2-4-6V7c0-4 4-9 7-9s7 5 7 9v18c0 4-2 6-4 6z" />
     </svg>
   );
 }

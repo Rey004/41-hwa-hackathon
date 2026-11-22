@@ -106,6 +106,41 @@ export const TRAINING_ZONES = [
   },
 ];
 
+export const LEARNING_CATEGORIES = [
+  {
+    id: "obedience",
+    name: "Obedience",
+    count: "6 commands",
+    description:
+      "Sit, down, stay, come, heel and leave it — the everyday essentials that make shared spaces a pleasure.",
+    tone: "forest",
+  },
+  {
+    id: "impulse",
+    name: "Impulse Control",
+    count: "4 behaviours",
+    description:
+      "Wait at the door, ignore dropped food, settle on the mat and stop barking. Calm is a trainable skill.",
+    tone: "mint",
+  },
+  {
+    id: "scentwork",
+    name: "Scent & Tracking",
+    count: "3 games",
+    description:
+      "Find it, hide it and trail it — channel your dog's nose into structured, satisfying problem solving.",
+    tone: "coral",
+  },
+  {
+    id: "tricks",
+    name: "Tricks & Motion",
+    count: "8 tricks",
+    description:
+      "Spin, bow, paw, cross and the rest — physical tasks that build coordination, confidence and focus.",
+    tone: "green",
+  },
+];
+
 export const TRAINING_STEPS = [
   {
     step: 1,
