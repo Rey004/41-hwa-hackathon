@@ -22,6 +22,7 @@ body {
   background-color: var(--brand-ivory);
   color: var(--brand-charcoal);
   font-family: var(--font-body, system-ui, -apple-system, sans-serif);
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -116,9 +117,12 @@ h6,
 
 /* Floating animation */
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-8px);
   }
@@ -134,10 +138,119 @@ h6,
 
 /* Subtle gentle pulse */
 @keyframes pulse-subtle {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+/* Dotted trail march */
+@keyframes march {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.animate-trail {
+  stroke-dasharray: 6 6;
+  animation: march 1.5s linear infinite;
+}
+
+/* Paw loader animations */
+@keyframes paw-pad {
+
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes toe-bean {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(0.9);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateY(-3px) scale(1.15);
+    opacity: 1;
+  }
+}
+
+.animate-paw-pad {
+  animation: paw-pad 1.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.animate-toe-1 {
+  animation: toe-bean 1.4s ease-in-out 0.1s infinite;
+  transform-origin: center;
+}
+
+.animate-toe-2 {
+  animation: toe-bean 1.4s ease-in-out 0.25s infinite;
+  transform-origin: center;
+}
+
+.animate-toe-3 {
+  animation: toe-bean 1.4s ease-in-out 0.4s infinite;
+  transform-origin: center;
+}
+
+.animate-toe-4 {
+  animation: toe-bean 1.4s ease-in-out 0.55s infinite;
+  transform-origin: center;
+}
+
+/* Floating animation */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 4.5s ease-in-out 1.5s infinite;
+}
+
+/* Subtle gentle pulse */
+@keyframes pulse-subtle {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
   50% {
     opacity: 0.85;
     transform: scale(1.02);
@@ -153,6 +266,7 @@ h6,
   0% {
     transform: translateX(-150%) skewX(-20deg);
   }
+
   100% {
     transform: translateX(200%) skewX(-20deg);
   }
@@ -185,6 +299,7 @@ h6,
     transform: scale(0.85);
     opacity: 0.9;
   }
+
   100% {
     transform: scale(2.5);
     opacity: 0;
@@ -197,12 +312,16 @@ h6,
 
 /* Doodle sparks wobble */
 @keyframes doodle-wobble {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: rotate(0deg) scale(1);
   }
+
   25% {
     transform: rotate(-8deg) scale(1.1);
   }
+
   75% {
     transform: rotate(8deg) scale(0.95);
   }
@@ -219,10 +338,12 @@ h6,
     transform: translateY(0px) rotate(0deg);
     opacity: 0.15;
   }
+
   50% {
     transform: translateY(-16px) rotate(6deg);
     opacity: 0.35;
   }
+
   100% {
     transform: translateY(0px) rotate(0deg);
     opacity: 0.15;
@@ -236,4 +357,71 @@ h6,
 .animate-paw-drift-delayed {
   animation: paw-drift 6.5s ease-in-out 1.8s infinite;
 }
+/* Scroll-triggered reveal animations */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
 
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scale-in scroll reveal */
+.scale-on-scroll {
+  opacity: 0;
+  transform: scale(0.92) translateY(24px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scale-on-scroll.is-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Slide in from left */
+.reveal-from-left {
+  opacity: 0;
+  transform: translateX(-32px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-from-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide in from right */
+.reveal-from-right {
+  opacity: 0;
+  transform: translateX(32px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-from-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger transition delays */
+.stagger-1 {
+  transition-delay: 90ms;
+}
+
+.stagger-2 {
+  transition-delay: 180ms;
+}
+
+.stagger-3 {
+  transition-delay: 270ms;
+}
+
+.stagger-4 {
+  transition-delay: 360ms;
+}

@@ -13,6 +13,7 @@ import {
 import { useCart } from "@/lib/cart";
 
 interface NavItem {
+  number: string;
   label: string;
   href?: string;
   sectionId?: string;
@@ -48,11 +49,11 @@ export const Header: React.FC = () => {
   }, [mobileMenuOpen]);
 
   const navLinks: NavItem[] = [
-    { label: "Product", href: "/product/pawpath" },
-    { label: "The Experience", sectionId: "experience" },
-    { label: "What They'll Learn", sectionId: "learning-journey" },
-    { label: "How It Works", sectionId: "how-it-works" },
-    { label: "FAQ", sectionId: "faq" },
+    { number: "01", label: "Product", href: "/product/pawpath" },
+    { number: "02", label: "The Experience", sectionId: "experience" },
+    { number: "03", label: "What They'll Learn", sectionId: "learning-journey" },
+    { number: "04", label: "How It Works", sectionId: "how-it-works" },
+    { number: "05", label: "FAQ", sectionId: "faq" },
   ];
 
   const handleNavClick = (
@@ -75,7 +76,7 @@ export const Header: React.FC = () => {
           if (el) {
             el.scrollIntoView({ behavior: "smooth" });
           }
-        }, 300);
+        }, 350);
       }
     }
   };
@@ -103,7 +104,7 @@ export const Header: React.FC = () => {
             </span>
           </Link>
 
-          {/* Center Navigation Links */}
+          {/* Center Navigation Links (Desktop) */}
           <nav className="hidden md:flex items-center gap-7 lg:gap-8">
             {navLinks.map((item) => {
               if (item.href) {
@@ -142,7 +143,7 @@ export const Header: React.FC = () => {
           <div className="flex items-center gap-3">
             <Link
               href="/product/pawpath"
-              className="hidden sm:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#123321] hover:bg-[#0b2416] text-white text-xs font-bold transition-all shadow-xs hover:scale-[1.02] active:scale-[0.98]"
+              className="hidden sm:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#123321] hover:bg-[#0b2416] text-white text-xs font-bold transition-all shadow-xs hover:scale-[1.02] active:scale-[0.98] btn-shimmer"
             >
               <span>Shop Now</span>
               <ArrowRight className="w-3.5 h-3.5 text-[#9ec490]" />
@@ -166,102 +167,127 @@ export const Header: React.FC = () => {
 
             {/* Mobile Menu Toggle Button */}
             <button
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              onClick={() => setMobileMenuOpen(true)}
               className="md:hidden p-2 rounded-xl text-[#123321] hover:bg-[#123321]/10 transition cursor-pointer"
-              aria-label="Toggle navigation menu"
+              aria-label="Open navigation menu"
             >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              <Menu className="w-6 h-6" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Sidebar Navigation Drawer */}
+      {/* FULL-PAGE MOBILE HAMBURGER MENU OVERLAY WITH SMOOTH ANIMATION */}
       <div
-        className={`fixed inset-0 z-50 md:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[120] md:hidden bg-[#f7f5ee] flex flex-col justify-between p-6 sm:p-8 overflow-y-auto transition-all duration-400 ease-out ${
           mobileMenuOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+            ? "opacity-100 pointer-events-auto translate-y-0"
+            : "opacity-0 pointer-events-none -translate-y-4"
         }`}
       >
-        {/* Backdrop */}
-        <div
-          onClick={() => setMobileMenuOpen(false)}
-          className="absolute inset-0 bg-black/40 backdrop-blur-xs"
-        />
+        {/* Top Bar inside Fullscreen Menu */}
+        <div className="flex items-center justify-between pb-6 border-b border-[#e2e9de]">
+          <Link
+            href="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2 group cursor-pointer"
+          >
+            <PawPrint className="w-6 h-6 text-[#123321]" />
+            <span className="font-heading text-xl font-black tracking-tight text-[#123321]">
+              PAWPATH
+            </span>
+          </Link>
 
-        {/* Slide-in Sidebar Panel */}
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="w-10 h-10 rounded-full bg-white border border-[#dce4d8] flex items-center justify-center text-[#123321] shadow-xs hover:bg-[#eef3eb] hover:scale-105 active:scale-95 transition cursor-pointer"
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Navigation Links with Staggered Entrance Animation */}
+        <nav className="my-auto py-8 flex flex-col space-y-2">
+          {navLinks.map((item, idx) => {
+            const delayStyle = {
+              transitionDelay: mobileMenuOpen ? `${idx * 60 + 80}ms` : "0ms",
+            };
+
+            if (item.href) {
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={delayStyle}
+                  className={`group py-3.5 border-b border-[#e2e9de]/70 flex items-center justify-between transition-all duration-400 ease-out ${
+                    mobileMenuOpen
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-3"
+                  }`}
+                >
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-mono text-xs text-[#678a52] font-bold">
+                      {item.number}
+                    </span>
+                    <span className="font-heading text-2xl sm:text-3xl font-black text-[#123321] group-hover:text-[#527741] transition">
+                      {item.label}
+                    </span>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-[#123321]/40 group-hover:translate-x-1 group-hover:text-[#123321] transition-all" />
+                </Link>
+              );
+            }
+
+            return (
+              <button
+                key={item.label}
+                onClick={(e) => handleNavClick(e, item)}
+                style={delayStyle}
+                className={`group w-full py-3.5 border-b border-[#e2e9de]/70 flex items-center justify-between text-left cursor-pointer bg-transparent transition-all duration-400 ease-out ${
+                  mobileMenuOpen
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-3"
+                }`}
+              >
+                <div className="flex items-baseline gap-3">
+                  <span className="font-mono text-xs text-[#678a52] font-bold">
+                    {item.number}
+                  </span>
+                  <span className="font-heading text-2xl sm:text-3xl font-black text-[#123321] group-hover:text-[#527741] transition">
+                    {item.label}
+                  </span>
+                </div>
+                <ArrowRight className="w-5 h-5 text-[#123321]/40 group-hover:translate-x-1 group-hover:text-[#123321] transition-all" />
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Bottom Actions inside Fullscreen Menu */}
         <div
-          className={`absolute top-0 right-0 bottom-0 w-[280px] sm:w-[320px] bg-[#f7f5ee] shadow-2xl p-6 flex flex-col justify-between transition-transform duration-300 ease-out border-l border-[#e2e9de] ${
-            mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          style={{
+            transitionDelay: mobileMenuOpen ? "420ms" : "0ms",
+          }}
+          className={`pt-6 border-t border-[#e2e9de] space-y-4 transition-all duration-400 ease-out ${
+            mobileMenuOpen
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-3"
           }`}
         >
-          <div>
-            {/* Header in sidebar */}
-            <div className="flex items-center justify-between pb-6 border-b border-[#e2e9de]">
-              <div className="flex items-center gap-2">
-                <PawPrint className="w-5 h-5 text-[#123321]" />
-                <span className="font-heading text-lg font-black text-[#123321]">
-                  PAWPATH
-                </span>
-              </div>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 rounded-lg text-[#123321]/70 hover:text-[#123321] hover:bg-[#eef3eb] transition cursor-pointer"
-                aria-label="Close menu"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+          <Link
+            href="/product/pawpath"
+            onClick={() => setMobileMenuOpen(false)}
+            className="w-full py-4 rounded-full bg-[#123321] text-white text-center font-bold text-sm tracking-wide shadow-lg flex items-center justify-center gap-2 hover:bg-[#0c2417] transition btn-shimmer"
+          >
+            <span>Shop The PAWPATH Mat</span>
+            <ArrowRight className="w-4 h-4 text-[#9ec490]" />
+          </Link>
 
-            {/* Nav list */}
-            <nav className="flex flex-col gap-2 pt-6">
-              {navLinks.map((item) => {
-                if (item.href) {
-                  return (
-                    <Link
-                      key={item.label}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="px-3 py-2.5 rounded-xl text-sm font-bold text-[#123321] hover:bg-[#eef3eb] hover:text-[#527741] transition flex items-center justify-between"
-                    >
-                      <span>{item.label}</span>
-                      <ArrowRight className="w-3.5 h-3.5 text-[#123321]/30" />
-                    </Link>
-                  );
-                }
-
-                return (
-                  <button
-                    key={item.label}
-                    onClick={(e) => handleNavClick(e, item)}
-                    className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-bold text-[#123321] hover:bg-[#eef3eb] hover:text-[#527741] transition flex items-center justify-between cursor-pointer"
-                  >
-                    <span>{item.label}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#123321]/30" />
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* Bottom Actions */}
-          <div className="pt-6 border-t border-[#e2e9de] space-y-3">
-            <Link
-              href="/product/pawpath"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3.5 rounded-full bg-[#123321] text-white text-center font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 hover:bg-[#0c2417] transition"
-            >
-              <span>Shop Now</span>
-              <ArrowRight className="w-4 h-4 text-[#9ec490]" />
-            </Link>
-            <p className="text-[11px] text-center text-[#123321]/50">
-              © 2026 PAWPATH. All rights reserved.
-            </p>
+          <div className="flex items-center justify-between text-xs text-[#123321]/60 pt-2 font-medium">
+            <span>Every pawstep learns something.</span>
+            <span>© 2026 PAWPATH</span>
           </div>
         </div>
       </div>

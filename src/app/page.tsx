@@ -259,6 +259,28 @@ export default function HomePage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // SCROLL-TRIGGERED CREATIVE REVEAL ANIMATIONS:
+  // Observes elements with .reveal-on-scroll, .scale-on-scroll, .reveal-from-left, .reveal-from-right
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -30px 0px" }
+    );
+
+    const elements = document.querySelectorAll(
+      ".reveal-on-scroll, .scale-on-scroll, .reveal-from-left, .reveal-from-right"
+    );
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   // Smooth scroll to a specific zone within the desktop sticky runway
   const scrollToZone = (index: number) => {
     setActiveZoneIndex(index);
@@ -293,7 +315,7 @@ export default function HomePage() {
       {/* =========================================================
           01. IMMERSIVE HERO — FIRST IMPRESSION (herobg cover)
           ========================================================= */}
-      <section className="relative min-h-[680px] sm:min-h-[760px] lg:min-h-[820px] w-full flex items-center pt-24 sm:pt-28 lg:pt-32 pb-16 sm:pb-24">
+      <section className="relative min-h-[820px] sm:min-h-[840px] lg:min-h-[860px] w-full flex items-center pt-24 sm:pt-28 lg:pt-32 pb-16 sm:pb-20">
         {/* Full Hero Background covering the section */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
@@ -301,10 +323,10 @@ export default function HomePage() {
             alt="Golden Retriever training on PAWPATH interactive mat in nature"
             fill
             priority
-            className="object-cover object-right sm:object-center transition-all duration-700"
+            className="object-cover object-[72%_18%] sm:object-[68%_center] lg:object-center transition-all duration-700"
           />
-          {/* Subtle soft gradient on left side to guarantee 100% crisp text readability across mobile & desktop */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#f7f5ee]/95 via-[#f7f5ee]/70 to-transparent sm:via-[#f7f5ee]/45 lg:via-transparent" />
+          {/* Reduced, subtle soft gradient in mobile so the dog and mat stay clear and vibrant */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#f7f5ee]/40 via-transparent to-[#f7f5ee]/15 sm:bg-gradient-to-r sm:from-[#f7f5ee]/90 sm:via-[#f7f5ee]/40 sm:to-transparent" />
 
           {/* Ambient drifting paw prints */}
           <div className="absolute top-28 left-8 sm:left-16 pointer-events-none text-[#123321]/15 animate-paw-drift hidden sm:block">
@@ -317,18 +339,18 @@ export default function HomePage() {
 
         {/* Content Container positioned cleanly over the background */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
             {/* Left Column: Typography, Eyebrow & CTAs */}
-            <div className="lg:col-span-6 space-y-6 sm:space-y-8">
+            <div className="lg:col-span-7 space-y-4 sm:space-y-6 lg:space-y-8">
               {/* Pill Eyebrow */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e7ede4]/90 backdrop-blur-xs text-[#123321] text-[11px] sm:text-xs font-bold tracking-wide border border-[#d6dfd2] shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-[#e7ede4]/90 backdrop-blur-xs text-[#123321] text-[10px] sm:text-xs font-bold tracking-wide border border-[#d6dfd2] shadow-xs">
                 <span className="w-2 h-2 rounded-full bg-[#3d6848] animate-pulse" />
                 <span>{currentHeroSlide.eyebrow}</span>
               </div>
 
               {/* Main Heading with dynamic slide cross-fade */}
               <div key={activeHeroSlide} className="transition-all duration-500 ease-out">
-                <h1 className="font-heading text-4xl sm:text-6xl lg:text-[70px] font-black text-[#123321] leading-[1.06] tracking-tight">
+                <h1 className="font-heading text-3xl sm:text-5xl lg:text-[68px] font-black text-[#123321] leading-[1.08] tracking-tight">
                   {currentHeroSlide.headlineStart}
                   <br />
                   {currentHeroSlide.headlineMid}
@@ -339,16 +361,16 @@ export default function HomePage() {
                 </h1>
 
                 {/* Supporting Text */}
-                <p className="mt-5 text-sm sm:text-base text-[#123321]/85 leading-relaxed max-w-md font-medium">
+                <p className="mt-3 sm:mt-5 text-xs sm:text-base text-[#123321]/85 leading-relaxed max-w-xs sm:max-w-md font-medium">
                   {currentHeroSlide.description}
                 </p>
               </div>
 
-              {/* CTA Buttons (No #hash in route) */}
-              <div className="pt-2 flex flex-wrap items-center gap-3.5">
+              {/* CTA Buttons (Responsive layout) */}
+              <div className="pt-1 sm:pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3.5 max-w-xs sm:max-w-none">
                 <Link
                   href="/product/pawpath"
-                  className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#123321] hover:bg-[#0b2416] text-white text-xs sm:text-sm font-bold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer btn-shimmer"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#123321] hover:bg-[#0b2416] text-white text-xs sm:text-sm font-bold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer btn-shimmer text-center"
                 >
                   <span>{currentHeroSlide.ctaText}</span>
                   <ArrowRight className="w-4 h-4 text-[#9ec490]" />
@@ -357,19 +379,19 @@ export default function HomePage() {
                 {/* Watch Video Demo Pill */}
                 <button
                   onClick={() => setIsVideoModalOpen(true)}
-                  className="inline-flex items-center gap-2 px-5 py-4 rounded-full bg-white/80 hover:bg-white text-[#123321] border border-[#123321]/15 text-xs font-bold shadow-xs hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer backdrop-blur-xs"
+                  className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-3 sm:py-4 rounded-full bg-white/85 hover:bg-white text-[#123321] border border-[#123321]/15 text-xs font-bold shadow-xs hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer backdrop-blur-xs text-center"
                 >
-                  <div className="w-5 h-5 rounded-full bg-[#123321] text-white flex items-center justify-center">
-                    <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#123321] text-white flex items-center justify-center">
+                    <Play className="w-2 h-2 sm:w-2.5 sm:h-2.5 fill-current ml-0.5" />
                   </div>
                   <span>Watch Demo (1 min)</span>
                 </button>
               </div>
 
               {/* Slider Controls / "Slide Bar" & Scroll Prompt */}
-              <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 text-xs text-[#123321]/70 font-semibold border-t border-[#123321]/15 max-w-md">
+              <div className="pt-4 sm:pt-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-xs text-[#123321]/70 font-semibold border-t border-[#123321]/15 max-w-md">
                 {/* Active Slider Bar with dynamic segments */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 sm:gap-3">
                   <span className="font-mono text-xs tracking-wider font-bold text-[#123321]">
                     0{activeHeroSlide + 1} — 0{HERO_SLIDES.length}
                   </span>
@@ -382,8 +404,8 @@ export default function HomePage() {
                         onClick={() => setActiveHeroSlide(idx)}
                         className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                           activeHeroSlide === idx
-                            ? "w-8 bg-[#123321]"
-                            : "w-3 bg-[#123321]/20 hover:bg-[#123321]/40"
+                            ? "w-7 sm:w-8 bg-[#123321]"
+                            : "w-2.5 sm:w-3 bg-[#123321]/20 hover:bg-[#123321]/40"
                         }`}
                         aria-label={`Go to slide ${idx + 1}`}
                       />
@@ -425,15 +447,15 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Column: Floating interactive card positioned over the mat in the background */}
-            <div className="lg:col-span-6 relative flex flex-col items-end lg:pr-6 space-y-4">
+            {/* Right Column: Floating interactive card (Desktop float / Mobile compact preview) */}
+            <div className="lg:col-span-5 relative flex flex-col items-start lg:items-end lg:pr-6 space-y-3 pt-2 lg:pt-0">
               {/* Floating Dynamic Zone Card */}
               <div
                 onClick={() => scrollToZone(currentHeroSlide.card.zoneIndex)}
-                className="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/80 max-w-[260px] sm:max-w-[280px] hover:scale-105 transition-all duration-300 group cursor-pointer animate-float"
+                className="bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 shadow-xl border border-white/80 w-full sm:max-w-[280px] hover:scale-105 transition-all duration-300 group cursor-pointer animate-float"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-13 h-13 rounded-xl overflow-hidden relative flex-shrink-0 bg-[#0d3f29] shadow-inner">
+                  <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-xl overflow-hidden relative flex-shrink-0 bg-[#0d3f29] shadow-inner">
                     <Image
                       src={currentHeroSlide.card.image}
                       alt={currentHeroSlide.card.title}
@@ -445,26 +467,15 @@ export default function HomePage() {
                     <h4 className="font-heading font-black text-xs sm:text-sm text-[#123321] group-hover:text-[#527741] transition">
                       {currentHeroSlide.card.title}
                     </h4>
-                    <p className="text-[11px] text-[#123321]/70 leading-snug mt-0.5">
+                    <p className="text-[10px] sm:text-[11px] text-[#123321]/70 leading-snug mt-0.5">
                       {currentHeroSlide.card.description}
                     </p>
-                    <span className="text-[10px] font-bold text-[#123321] mt-1.5 inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                    <span className="text-[10px] font-bold text-[#123321] mt-1 inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                       Explore Zone →
                     </span>
                   </div>
                 </div>
               </div>
-
-              {/* Secondary Floating Video Preview Tag */}
-              <button
-                onClick={() => setIsVideoModalOpen(true)}
-                className="bg-[#123321]/90 backdrop-blur-md text-white rounded-full px-4 py-2 text-xs font-semibold shadow-lg hover:bg-[#123321] flex items-center gap-2 hover:scale-105 transition-all cursor-pointer"
-              >
-                <div className="w-4 h-4 rounded-full bg-[#9ec490] text-[#123321] flex items-center justify-center">
-                  <Play className="w-2 h-2 fill-current ml-0.5" />
-                </div>
-                <span>See how it works • 1 min</span>
-              </button>
             </div>
           </div>
         </div>
@@ -557,10 +568,10 @@ export default function HomePage() {
       {/* =========================================================
           02. BRAND PHILOSOPHY — MORE THAN PLAYTIME
           ========================================================= */}
-      <section id="experience" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section id="experience" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left: Asymmetrical Arch Pill Image (Living Room Lifestyle) */}
-          <div className="lg:col-span-6 relative">
+          <div className="lg:col-span-6 relative scale-on-scroll">
             <div className="relative aspect-[4/3] sm:aspect-[16/11] rounded-[36px] sm:rounded-[48px] overflow-hidden shadow-xl border border-[#e2e9de] bg-[#eef3eb] group">
               <Image
                 src="/images/products/dog-lifestyle.webp"
@@ -572,7 +583,7 @@ export default function HomePage() {
           </div>
 
           {/* Right: Editorial Message */}
-          <div className="lg:col-span-6 space-y-6 sm:space-y-8">
+          <div className="lg:col-span-6 space-y-6 sm:space-y-8 reveal-on-scroll">
             {/* Decorative hand-drawn sparks with wobble animation */}
             <div className="text-[#678a52] text-xl font-bold select-none opacity-85 animate-doodle inline-flex items-center gap-1.5">
               <span>\</span>
@@ -615,10 +626,10 @@ export default function HomePage() {
       {/* =========================================================
           03. PRODUCT REVEAL — MEET PAWPATH
           ========================================================= */}
-      <section className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left: Product Overview Copy */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-5 space-y-6 reveal-on-scroll">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e7ede4] text-[#123321] text-[11px] sm:text-xs font-bold tracking-wide shadow-xs">
               <span className="w-2 h-2 rounded-full bg-[#3d6848]" />
               <span>ONE PRODUCT. MANY POSSIBILITIES.</span>
@@ -646,7 +657,7 @@ export default function HomePage() {
           </div>
 
           {/* Right: Floating Mat Flagship 3D Render */}
-          <div className="lg:col-span-7 relative">
+          <div className="lg:col-span-7 relative scale-on-scroll stagger-1">
             <div className="relative aspect-[16/10] w-full rounded-[36px] sm:rounded-[48px] overflow-hidden flex items-center justify-center p-4">
               <Image
                 src="/images/products/hero.webp"
@@ -841,7 +852,7 @@ export default function HomePage() {
 
         {/* MOBILE VIEW: VERTICAL STACK (md:hidden) — NO LOCKING */}
         <div className="md:hidden bg-[#123321] text-white rounded-[32px] p-6 shadow-xl space-y-6">
-          <div>
+          <div className="reveal-on-scroll">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[#9ec490] text-[10px] font-bold tracking-wider mb-2">
               <span className="w-2 h-2 rounded-full bg-[#9ec490]" />
               <span>FIVE LITTLE ZONES</span>
@@ -856,10 +867,10 @@ export default function HomePage() {
 
           {/* Stacked Zone Cards */}
           <div className="space-y-5">
-            {ZONES_DATA.map((z) => (
+            {ZONES_DATA.map((z, idx) => (
               <div
                 key={z.id}
-                className="bg-white text-[#123321] rounded-2xl p-5 shadow-lg border border-white/90 space-y-3.5"
+                className={`bg-white text-[#123321] rounded-2xl p-5 shadow-lg border border-white/90 space-y-3.5 reveal-on-scroll stagger-${(idx % 4) + 1}`}
               >
                 <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-[#092215]">
                   <Image
@@ -909,10 +920,10 @@ export default function HomePage() {
       {/* =========================================================
           05. LEARNING JOURNEY — EVERY DOG HAS A NEXT STEP
           ========================================================= */}
-      <section id="learning-journey" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section id="learning-journey" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Left Column: Heading & Intro */}
-          <div className="lg:col-span-4 space-y-5">
+          <div className="lg:col-span-4 space-y-5 reveal-on-scroll">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e7ede4] text-[#123321] text-[11px] sm:text-xs font-bold tracking-wide shadow-xs">
               <span className="w-2 h-2 rounded-full bg-[#3d6848]" />
               <span>THE LEARNING JOURNEY</span>
@@ -946,7 +957,7 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
               {/* Stage 01: The Beginner */}
-              <div className="bg-white rounded-3xl p-5 border border-[#e2e9de] shadow-xs hover:shadow-md transition space-y-3 group hover:-translate-y-1 duration-300">
+              <div className="bg-white rounded-3xl p-5 border border-[#e2e9de] shadow-xs hover:shadow-md transition space-y-3 group hover:-translate-y-1 duration-300 reveal-on-scroll stagger-1">
                 <span className="text-[10px] font-bold text-[#123321]/70 bg-[#f0f4ee] px-2.5 py-1 rounded-full uppercase tracking-wider inline-block">
                   01 — THE BEGINNER
                 </span>
@@ -967,7 +978,7 @@ export default function HomePage() {
               </div>
 
               {/* Stage 02: The Learner */}
-              <div className="bg-white rounded-3xl p-5 border border-[#e2e9de] shadow-xs hover:shadow-md transition space-y-3 group hover:-translate-y-1 duration-300">
+              <div className="bg-white rounded-3xl p-5 border border-[#e2e9de] shadow-xs hover:shadow-md transition space-y-3 group hover:-translate-y-1 duration-300 reveal-on-scroll stagger-2">
                 <span className="text-[10px] font-bold text-[#123321]/70 bg-[#f0f4ee] px-2.5 py-1 rounded-full uppercase tracking-wider inline-block">
                   02 — THE LEARNER
                 </span>
@@ -988,7 +999,7 @@ export default function HomePage() {
               </div>
 
               {/* Stage 03: The Well-Mannered */}
-              <div className="bg-white rounded-3xl p-5 border border-[#e2e9de] shadow-xs hover:shadow-md transition space-y-3 group hover:-translate-y-1 duration-300">
+              <div className="bg-white rounded-3xl p-5 border border-[#e2e9de] shadow-xs hover:shadow-md transition space-y-3 group hover:-translate-y-1 duration-300 reveal-on-scroll stagger-3">
                 <span className="text-[10px] font-bold text-[#123321]/70 bg-[#f0f4ee] px-2.5 py-1 rounded-full uppercase tracking-wider inline-block">
                   03 — THE WELL-MANNERED
                 </span>
@@ -1015,10 +1026,10 @@ export default function HomePage() {
       {/* =========================================================
           06. HOW IT WORKS — SIMPLE LESSONS, HAPPY TAILS
           ========================================================= */}
-      <section id="how-it-works" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section id="how-it-works" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Heading & Intro */}
-          <div className="lg:col-span-4 space-y-5">
+          <div className="lg:col-span-4 space-y-5 reveal-on-scroll">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e7ede4] text-[#123321] text-[11px] sm:text-xs font-bold tracking-wide shadow-xs">
               <span className="w-2 h-2 rounded-full bg-[#3d6848]" />
               <span>HOW IT WORKS</span>
@@ -1051,7 +1062,7 @@ export default function HomePage() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
               {/* Step 01 */}
-              <div className="flex flex-col items-center text-center space-y-3 group">
+              <div className="flex flex-col items-center text-center space-y-3 group reveal-on-scroll stagger-1">
                 <div className="w-16 h-16 rounded-full bg-white border border-[#d8e0d4] flex items-center justify-center text-[#123321] shadow-xs group-hover:scale-110 group-hover:shadow-md transition-all duration-300">
                   <PawPrint className="w-6 h-6 text-[#123321]" />
                 </div>
@@ -1067,7 +1078,7 @@ export default function HomePage() {
               </div>
 
               {/* Step 02 */}
-              <div className="flex flex-col items-center text-center space-y-3 group">
+              <div className="flex flex-col items-center text-center space-y-3 group reveal-on-scroll stagger-2">
                 <div className="w-16 h-16 rounded-full bg-white border border-[#d8e0d4] flex items-center justify-center text-[#123321] shadow-xs group-hover:scale-110 group-hover:shadow-md transition-all duration-300">
                   <Radio className="w-6 h-6 text-[#123321]" />
                 </div>
@@ -1083,7 +1094,7 @@ export default function HomePage() {
               </div>
 
               {/* Step 03 */}
-              <div className="flex flex-col items-center text-center space-y-3 group">
+              <div className="flex flex-col items-center text-center space-y-3 group reveal-on-scroll stagger-3">
                 <div className="w-16 h-16 rounded-full bg-white border border-[#d8e0d4] flex items-center justify-center text-[#123321] shadow-xs group-hover:scale-110 group-hover:shadow-md transition-all duration-300">
                   <Trophy className="w-6 h-6 text-[#123321]" />
                 </div>
@@ -1099,7 +1110,7 @@ export default function HomePage() {
               </div>
 
               {/* Step 04 */}
-              <div className="flex flex-col items-center text-center space-y-3 group">
+              <div className="flex flex-col items-center text-center space-y-3 group reveal-on-scroll stagger-4">
                 <div className="w-16 h-16 rounded-full bg-white border border-[#d8e0d4] flex items-center justify-center text-[#123321] shadow-xs group-hover:scale-110 group-hover:shadow-md transition-all duration-300">
                   <Heart className="w-6 h-6 text-[#123321]" />
                 </div>
@@ -1121,9 +1132,9 @@ export default function HomePage() {
       {/* =========================================================
           07. PRODUCT DETAILS — THOUGHTFULLY DESIGNED
           ========================================================= */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
         <div className="bg-white rounded-[36px] sm:rounded-[48px] p-8 sm:p-14 border border-[#e2e9de] shadow-sm">
-          <div className="max-w-3xl mx-auto text-center space-y-4 mb-12">
+          <div className="max-w-3xl mx-auto text-center space-y-4 mb-12 reveal-on-scroll">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e7ede4] text-[#123321] text-[11px] sm:text-xs font-bold tracking-wide shadow-xs">
               <span className="w-2 h-2 rounded-full bg-[#3d6848]" />
               <span>THOUGHTFULLY DESIGNED.</span>
@@ -1142,7 +1153,7 @@ export default function HomePage() {
 
           {/* 4 Feature Callouts */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-3xl bg-[#f7f5ee] border border-[#e4eae0] space-y-2.5 hover:shadow-md transition-shadow">
+            <div className="p-6 rounded-3xl bg-[#f7f5ee] border border-[#e4eae0] space-y-2.5 hover:shadow-md transition-shadow scale-on-scroll stagger-1">
               <span className="w-7 h-7 rounded-full bg-[#123321] text-white flex items-center justify-center text-xs font-bold font-mono">
                 01
               </span>
@@ -1154,7 +1165,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl bg-[#f7f5ee] border border-[#e4eae0] space-y-2.5 hover:shadow-md transition-shadow">
+            <div className="p-6 rounded-3xl bg-[#f7f5ee] border border-[#e4eae0] space-y-2.5 hover:shadow-md transition-shadow scale-on-scroll stagger-2">
               <span className="w-7 h-7 rounded-full bg-[#123321] text-white flex items-center justify-center text-xs font-bold font-mono">
                 02
               </span>
@@ -1166,7 +1177,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl bg-[#f7f5ee] border border-[#e4eae0] space-y-2.5 hover:shadow-md transition-shadow">
+            <div className="p-6 rounded-3xl bg-[#f7f5ee] border border-[#e4eae0] space-y-2.5 hover:shadow-md transition-shadow scale-on-scroll stagger-3">
               <span className="w-7 h-7 rounded-full bg-[#123321] text-white flex items-center justify-center text-xs font-bold font-mono">
                 03
               </span>
@@ -1178,7 +1189,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl bg-[#f7f5ee] border border-[#e4eae0] space-y-2.5 hover:shadow-md transition-shadow">
+            <div className="p-6 rounded-3xl bg-[#f7f5ee] border border-[#e4eae0] space-y-2.5 hover:shadow-md transition-shadow scale-on-scroll stagger-4">
               <span className="w-7 h-7 rounded-full bg-[#123321] text-white flex items-center justify-center text-xs font-bold font-mono">
                 04
               </span>
@@ -1196,8 +1207,8 @@ export default function HomePage() {
       {/* =========================================================
           08. FREQUENTLY ASKED QUESTIONS (FAQ SECTION)
           ========================================================= */}
-      <section id="faq" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div className="text-center space-y-4 mb-12 sm:mb-16">
+      <section id="faq" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto overflow-hidden">
+        <div className="text-center space-y-4 mb-12 sm:mb-16 reveal-on-scroll">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e7ede4] text-[#123321] text-[11px] sm:text-xs font-bold tracking-wide shadow-xs">
             <span className="w-2 h-2 rounded-full bg-[#3d6848]" />
             <span>FREQUENTLY ASKED QUESTIONS</span>
@@ -1212,25 +1223,25 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Accordion FAQ Items */}
+        {/* Accordion FAQ Items with Smooth Grid Transitions */}
         <div className="space-y-4">
           {FAQS_DATA.map((faq, idx) => {
             const isOpen = openFaqIndex === idx;
             return (
               <div
                 key={idx}
-                className="bg-white rounded-3xl border border-[#e2e9de] overflow-hidden shadow-xs transition-all duration-300 hover:border-[#123321]/30"
+                className={`bg-white rounded-3xl border border-[#e2e9de] overflow-hidden shadow-xs transition-all duration-300 hover:border-[#123321]/30 reveal-on-scroll stagger-${(idx % 4) + 1}`}
               >
                 <button
                   onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                  className="w-full p-6 sm:p-7 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none"
+                  className="w-full p-5 sm:p-7 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none"
                   aria-expanded={isOpen}
                 >
                   <span className="font-heading font-black text-sm sm:text-base text-[#123321] leading-snug">
                     {faq.question}
                   </span>
                   <div
-                    className={`w-8 h-8 rounded-full border border-[#e2e9de] flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${
+                    className={`w-8 h-8 rounded-full border border-[#e2e9de] flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
                       isOpen ? "bg-[#123321] text-white rotate-180" : "bg-[#f7f5ee] text-[#123321]"
                     }`}
                   >
@@ -1238,18 +1249,27 @@ export default function HomePage() {
                   </div>
                 </button>
 
-                {isOpen && (
-                  <div className="px-6 pb-6 sm:px-7 sm:pb-7 text-xs sm:text-sm text-[#123321]/80 leading-relaxed font-normal border-t border-[#f0f4ee] pt-4 animate-fade-in">
-                    {faq.answer}
+                {/* Smooth Animated Accordion Height */}
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    isOpen
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-5 pb-5 sm:px-7 sm:pb-7 text-xs sm:text-sm text-[#123321]/80 leading-relaxed font-normal border-t border-[#f0f4ee] pt-3.5">
+                      {faq.answer}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
         </div>
 
         {/* Support Callout */}
-        <div className="mt-12 text-center p-6 sm:p-8 rounded-3xl bg-[#eef3eb] border border-[#dce5d9] max-w-xl mx-auto space-y-2">
+        <div className="mt-12 text-center p-6 sm:p-8 rounded-3xl bg-[#eef3eb] border border-[#dce5d9] max-w-xl mx-auto space-y-2 reveal-on-scroll">
           <p className="font-heading font-black text-sm text-[#123321]">
             Still have questions?
           </p>
@@ -1271,40 +1291,40 @@ export default function HomePage() {
       {/* =========================================================
           09. FINAL BRAND STATEMENT — EVERY PAWSTEP COUNTS (lastbg cover)
           ========================================================= */}
-      <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="relative rounded-[36px] sm:rounded-[48px] p-8 sm:p-14 lg:p-16 overflow-hidden shadow-2xl min-h-[420px] sm:min-h-[480px] flex items-center">
+      <section className="py-10 sm:py-20 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
+        <div className="relative rounded-[32px] sm:rounded-[48px] p-6 sm:p-14 lg:p-16 pt-48 sm:pt-14 overflow-hidden shadow-2xl min-h-[480px] sm:min-h-[440px] lg:min-h-[480px] flex items-end sm:items-center">
           {/* Cover background: lastbg.webp */}
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/products/lastbg.webp"
               alt="Joyful Golden Retriever and PAWPATH interactive mat"
               fill
-              className="object-cover object-center"
+              className="object-cover object-[24%_25%] sm:object-center"
             />
-            {/* Subtle overlay gradient to ensure text clarity */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#123321]/40 to-[#123321]/90" />
+            {/* Subtle gradient ensuring smiling dog is visible in top half on mobile, text readable below */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#123321]/95 via-[#123321]/55 to-transparent sm:bg-gradient-to-r sm:from-transparent sm:via-[#123321]/40 sm:to-[#123321]/90" />
           </div>
 
-          <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             {/* Left space for the smiling dog in lastbg */}
             <div className="hidden lg:block lg:col-span-5" />
 
             {/* Right: Headline, Description & Direct Purchase CTA */}
-            <div className="lg:col-span-7 space-y-6 text-white text-left lg:pl-6">
-              <h2 className="font-heading text-4xl sm:text-6xl font-black text-white leading-tight tracking-tight">
+            <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-white text-left lg:pl-6 reveal-on-scroll">
+              <h2 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
                 Every pawstep<br />
                 counts.
               </h2>
 
-              <p className="text-sm sm:text-base text-white/90 leading-relaxed font-normal max-w-lg">
+              <p className="text-xs sm:text-base text-white/90 leading-relaxed font-normal max-w-lg">
                 Make room for more than playtime. Make room for progress, little victories,
                 and a whole lot of tail wags. Their next big lesson starts here.
               </p>
 
-              <div className="pt-2 flex flex-wrap items-center gap-4">
+              <div className="pt-1 sm:pt-2 flex flex-wrap items-center gap-4">
                 <Link
                   href="/product/pawpath"
-                  className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#123321] hover:bg-[#0c2417] text-white text-sm font-bold border border-white/30 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer btn-shimmer"
+                  className="w-full sm:w-auto text-center inline-flex items-center justify-center gap-2.5 px-8 py-3.5 sm:py-4 rounded-full bg-[#123321] hover:bg-[#0c2417] text-white text-xs sm:text-sm font-bold border border-white/30 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer btn-shimmer"
                 >
                   <span>Get Your PAWPATH</span>
                   <ArrowRight className="w-4 h-4 text-[#9ec490]" />
