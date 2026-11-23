@@ -305,6 +305,14 @@ export default function HomePage() {
           />
           {/* Subtle soft gradient on left side to guarantee 100% crisp text readability across mobile & desktop */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#f7f5ee]/95 via-[#f7f5ee]/70 to-transparent sm:via-[#f7f5ee]/45 lg:via-transparent" />
+
+          {/* Ambient drifting paw prints */}
+          <div className="absolute top-28 left-8 sm:left-16 pointer-events-none text-[#123321]/15 animate-paw-drift hidden sm:block">
+            <PawPrint className="w-10 h-10 rotate-12" />
+          </div>
+          <div className="absolute top-44 left-1/3 pointer-events-none text-[#123321]/10 animate-paw-drift-delayed hidden lg:block">
+            <PawPrint className="w-8 h-8 -rotate-15" />
+          </div>
         </div>
 
         {/* Content Container positioned cleanly over the background */}
@@ -340,7 +348,7 @@ export default function HomePage() {
               <div className="pt-2 flex flex-wrap items-center gap-3.5">
                 <Link
                   href="/product/pawpath"
-                  className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#123321] hover:bg-[#0b2416] text-white text-xs sm:text-sm font-bold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#123321] hover:bg-[#0b2416] text-white text-xs sm:text-sm font-bold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer btn-shimmer"
                 >
                   <span>{currentHeroSlide.ctaText}</span>
                   <ArrowRight className="w-4 h-4 text-[#9ec490]" />
@@ -565,8 +573,8 @@ export default function HomePage() {
 
           {/* Right: Editorial Message */}
           <div className="lg:col-span-6 space-y-6 sm:space-y-8">
-            {/* Decorative hand-drawn sparks with subtle animation */}
-            <div className="text-[#678a52] text-xl font-bold select-none opacity-80 animate-pulse-subtle flex items-center gap-1.5">
+            {/* Decorative hand-drawn sparks with wobble animation */}
+            <div className="text-[#678a52] text-xl font-bold select-none opacity-85 animate-doodle inline-flex items-center gap-1.5">
               <span>\</span>
               <span>|</span>
               <span>/</span>
@@ -741,8 +749,11 @@ export default function HomePage() {
                       fill
                       className="object-cover object-center transition-all duration-700 animate-fade-in"
                     />
-                    <div className="absolute top-3.5 left-3.5 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-mono font-bold border border-white/15 flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#9ec490] animate-pulse" />
+                    <div className="absolute top-3.5 left-3.5 bg-black/55 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[10px] text-white font-mono font-bold border border-white/15 flex items-center gap-2">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-radar absolute inline-flex h-full w-full rounded-full bg-[#9ec490] opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#9ec490]"></span>
+                      </span>
                       <span>ZONE {activeZone.number} • {activeZone.headline}</span>
                     </div>
                   </div>
@@ -1293,7 +1304,7 @@ export default function HomePage() {
               <div className="pt-2 flex flex-wrap items-center gap-4">
                 <Link
                   href="/product/pawpath"
-                  className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#123321] hover:bg-[#0c2417] text-white text-sm font-bold border border-white/30 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#123321] hover:bg-[#0c2417] text-white text-sm font-bold border border-white/30 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer btn-shimmer"
                 >
                   <span>Get Your PAWPATH</span>
                   <ArrowRight className="w-4 h-4 text-[#9ec490]" />

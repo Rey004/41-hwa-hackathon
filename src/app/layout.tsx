@@ -41,6 +41,11 @@ export const metadata: Metadata = {
       "What if playtime could teach a little more? Meet PAWPATH, the interactive training mat with five integrated zones.",
     images: ["/images/products/hero.webp"],
   },
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
