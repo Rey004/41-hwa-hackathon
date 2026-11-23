@@ -104,7 +104,7 @@ export default function ProductDetailPage() {
   return (
     <div className="pb-20 space-y-10 sm:space-y-14">
       {/* 1. Product Hero */}
-      <section className="pt-4 pb-4 px-3 sm:px-6 lg:px-8">
+      <section className="pt-24 sm:pt-28 pb-4 px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto bg-white rounded-[36px] sm:rounded-[48px] border-2 sm:border-3 border-[#dce7e0] p-6 sm:p-10 lg:p-14 shadow-xl">
           <nav className="text-xs text-gray-500 mb-6 flex items-center gap-2">
             <Link href="/" className="hover:text-emerald-800 transition">

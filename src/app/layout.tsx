@@ -4,7 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
-import { SITE_URL } from "@/lib/products";
+import { Preloader } from "@/components/loader";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-heading",
@@ -21,7 +21,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL("https://pawpathtraining.com"),
   title: "PAWPATH — Every Pawstep Learns Something",
   description:
     "Meet PAWPATH, the interactive all-in-one dog-training mat featuring five integrated zones that turn everyday learning into engaging little challenges for your dog.",
@@ -52,8 +52,8 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "PAWPATH",
-    url: SITE_URL,
-    logo: `${SITE_URL}/images/products/hero.webp`,
+    url: "https://pawpathtraining.com",
+    logo: "https://pawpathtraining.com/images/products/hero.webp",
     description:
       "PAWPATH creates innovative interactive dog-training mats with five permanently integrated zones.",
     sameAs: [],
@@ -70,7 +70,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[#faf8f3] text-[#14241c]">
+      <body className="min-h-full flex flex-col bg-[#f7f5ee] text-[#123321]">
+        <Preloader />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

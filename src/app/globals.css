@@ -4,14 +4,14 @@
   --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 
-  --brand-forest: #0a3824;
+  --brand-forest: #123321;
   --brand-green: #0da162;
   --brand-green-hover: #0a844f;
   --brand-emerald: #065f46;
   --brand-light-mint: #eaf5ed;
   --brand-soft-mint: #dcfce7;
   --brand-cream: #f6f3eb;
-  --brand-ivory: #faf8f3;
+  --brand-ivory: #f7f5ee;
   --brand-coral: #ff6b6b;
   --brand-charcoal: #14241c;
   --brand-muted: #536b5e;
@@ -22,7 +22,6 @@ body {
   background-color: var(--brand-ivory);
   color: var(--brand-charcoal);
   font-family: var(--font-body, system-ui, -apple-system, sans-serif);
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
